@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:id="@+id/relative">
+	<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/block2"> <!-- BLOCK2 -->
+		<ImageButton android:text="Button" android:id="@+id/loginbutton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" android:layout_alignTop="@+id/block1" android:layout_alignBottom="@+id/block1"/>
+		<!-- BLOCK1 -->
+		<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/block1" android:layout_toLeftOf="@+id/loginbutton"> 
+			<EditText android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:id="@+id/username"
+				android:hint="@string/usernamelabel"></EditText>
+			<EditText android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:id="@+id/password"
+				android:hint="@string/passwordlabel" android:password="true" android:layout_below="@id/username"></EditText>
+		</RelativeLayout> 
+		<!--  END BLOCK1 -->
+	</RelativeLayout>
+	<Spinner android:layout_below="@+id/block2" android:id="@+id/serverspinner" android:layout_height="wrap_content" android:layout_width="fill_parent"/>
+</RelativeLayout>

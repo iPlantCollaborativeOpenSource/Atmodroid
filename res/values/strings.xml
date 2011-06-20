@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Atmosphere for Android</string>
+    <string name="usernamelabel">Username:</string>
+    <string name="passwordlabel">Password:</string>
+    <string name="hellolabel">Click to Login to Atmosphere</string>
+    <string name="startlabel">Start Notification Service</string>
+    <string name="stoplabel">Stop Notification Service</string>
+    <string name="runinstancetext">Launch Instance</string>
+    <string name="delinstancetext">Terminate Instance</string>
+    <string name="loginRequired">Sign in to access the options below:</string>
+    <string name="createLabel">Create instance from:</string>
+    <string name="listRemoveText">List/Terminate:</string>
+    <string name="pendingButtonText">Pending Instances</string>
+    <string name="runningButtonText">Running Instances</string>
+    <string name="imagesButtonText">Images</string>
+    <string name="appsButtonText">Apps</string>
+    <string name="homebutton">Return to Home</string>
+    <string name="main_no_instances">No Instances Found.</string>
+</resources>

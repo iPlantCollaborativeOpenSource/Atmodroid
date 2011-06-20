@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:id="@+id/relative">
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:orientation="vertical">
+		<LinearLayout android:orientation="horizontal"
+			android:layout_width="fill_parent" android:layout_height="wrap_content">
+			<Button android:id="@+id/button" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:padding="10dp"
+				android:background="@drawable/android_button" />
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/textView1"
+				android:text="@string/hellolabel"></TextView>
+		</LinearLayout>
+		<LinearLayout android:orientation="vertical"
+			android:layout_width="fill_parent" android:layout_height="wrap_content">
+			<EditText android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:id="@+id/username"
+				android:hint="@string/usernamelabel"></EditText>
+			<EditText android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:id="@+id/password"
+				android:hint="@string/passwordlabel" android:password="true"></EditText>
+		</LinearLayout>
+		<TextView android:layout_height="wrap_content" android:id="@+id/textView2"
+			android:text="@string/loginRequired" android:layout_width="match_parent"
+			android:textStyle="bold"></TextView>
+		<LinearLayout android:orientation="horizontal"
+			android:layout_height="wrap_content" android:layout_width="wrap_content">
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:paddingRight="4px">
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/textView3"
+					android:text="@string/createLabel"></TextView>
+				<Button android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:id="@+id/listImagebutton"
+					android:text="Images" android:enabled="false"
+					android:layout_weight="1"></Button>
+				<Button android:layout_width="fill_parent"
+					android:layout_height="wrap_content" android:id="@+id/listAppsbutton"
+					android:text="Apps" android:enabled="false" android:layout_weight="1"></Button>
+			</LinearLayout>
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:paddingLeft="4px">
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:id="@+id/textView4"
+					android:text="@string/listRemoveText"></TextView>
+				<Button android:text="@string/pendingButtonText"
+					android:layout_height="wrap_content" android:id="@+id/listPendingButton"
+					android:layout_width="wrap_content" android:layout_weight="1"
+					android:enabled="false"></Button>
+				<Button android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:text="Running Instances"
+					android:enabled="false" android:layout_weight="1"
+					android:id="@+id/listRunningButton"></Button>
+			</LinearLayout>
+		</LinearLayout>
+	</LinearLayout>
+	<!-- Static Footer -->
+	<RelativeLayout android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:layout_alignParentBottom="true"
+		android:id="@+id/universal_nav">
+		<Button android:layout_width="wrap_content" android:text="Return to Home"
+			android:id="@+id/button1" android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true" />
+
+	</RelativeLayout>
+</RelativeLayout>
+
+<!-- <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent" android:layout_height="fill_parent" > 
+	<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" 
+	android:orientation="vertical"> <LinearLayout android:orientation="horizontal" 
+	android:layout_width="fill_parent" android:layout_height="wrap_content"> 
+	<Button android:id="@+id/button" android:layout_width="wrap_content" android:layout_height="wrap_content" 
+	android:padding="10dp" android:background="@drawable/android_button" /> <TextView 
+	android:layout_width="wrap_content" android:layout_height="wrap_content" 
+	android:id="@+id/textView1" android:text="@string/hellolabel"></TextView> 
+	</LinearLayout> <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"> <EditText android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" android:id="@+id/username" android:hint="@string/usernamelabel"></EditText> 
+	<EditText android:layout_width="fill_parent" android:layout_height="wrap_content" 
+	android:id="@+id/password" android:hint="@string/passwordlabel" android:password="true"></EditText> 
+	</LinearLayout> <TextView android:layout_height="wrap_content" android:id="@+id/textView2" 
+	android:text="@string/loginRequired" android:layout_width="match_parent" 
+	android:textStyle="bold"></TextView> <LinearLayout android:orientation="horizontal" 
+	android:layout_height="wrap_content" android:layout_width="wrap_content"> 
+	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" android:paddingRight="4px"> <TextView 
+	android:layout_width="wrap_content" android:layout_height="wrap_content" 
+	android:id="@+id/textView3" android:text="@string/createLabel"></TextView> 
+	<Button android:layout_width="fill_parent" android:layout_height="wrap_content" 
+	android:id="@+id/listImagebutton" android:text="Images" android:enabled="false" 
+	android:layout_weight="1"></Button> <Button android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" android:id="@+id/listAppsbutton" android:text="Apps" 
+	android:enabled="false" android:layout_weight="1"></Button> </LinearLayout> 
+	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" android:paddingLeft="4px"> <TextView 
+	android:layout_width="wrap_content" android:layout_height="wrap_content" 
+	android:id="@+id/textView4" android:text="@string/listRemoveText"></TextView> 
+	<Button android:text="@string/pendingButtonText" android:layout_height="wrap_content" 
+	android:id="@+id/listPendingButton" android:layout_width="wrap_content" android:layout_weight="1" 
+	android:enabled="false"></Button> <Button android:layout_width="wrap_content" 
+	android:layout_height="wrap_content" android:text="Running Instances" android:enabled="false" 
+	android:layout_weight="1" android:id="@+id/listRunningButton"></Button> </LinearLayout> 
+	</LinearLayout> </LinearLayout> </ScrollView> -->
