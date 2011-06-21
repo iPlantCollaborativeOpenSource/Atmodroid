@@ -25,8 +25,8 @@ This code requires:
 Install the Android SDK and use it to open and interact with the
 code as a developer.
 
-Non-developers and end users can download and manually install the
-.apk file found on the GitHub repository.
+Non-developers and end users can download and manually install
+atmodroid.apk file (found on the GitHub repository in the bin directory).
 
 To manually install the .apk file:
  1. Download to device
