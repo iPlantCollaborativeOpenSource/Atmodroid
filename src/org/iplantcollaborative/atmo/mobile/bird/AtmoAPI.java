@@ -1,9 +1,7 @@
 package org.iplantcollaborative.atmo.mobile.bird;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -24,10 +22,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-class AtmoAPI {
+class AtmoAPI implements Parcelable {
 	private static final boolean MOBILE = true;
+	private static final boolean DEBUG = false;
 	private static final String TAG = "AtmoDroid";
 	private String myserver;
 	private Date validdate;
@@ -598,7 +599,7 @@ class AtmoAPI {
 					+ "&instance_id=" + URLEncoder.encode(instance_id, "UTF-8")
 					+ "&volume_id=" + URLEncoder.encode(volume_id, "UTF-8"));
 
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				System.out.println(params);
 
 			String JSON = atmo_POST_to_JSON("attachVolume", params);
@@ -625,40 +626,9 @@ class AtmoAPI {
 	}
 	public boolean attachVolume(String instance_id, String volume_id) {
 		return attachVolume(instance_id, volume_id, "sdb");
-		/*
-		String params;
-		try {
-			params = ("device=" + URLEncoder.encode("sdb", "UTF-8")
-					+ "&instance_id=" + URLEncoder.encode(instance_id, "UTF-8")
-					+ "&volume_id=" + URLEncoder.encode(volume_id, "UTF-8"));
-
-			if (AtmoCL.DEBUG)
-				System.out.println(params);
-
-			String JSON = atmo_POST_to_JSON("attachVolume", params);
-			if (JSON == null) {
-				return false;
-			}
-			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
-			// Result Object
-			JSONObject object = orig.getJSONObject("result");
-			// Values (Where images are stored)
-			String status = object.getString("code");
-			if (status == null || status.length() == 0
-					|| status.equals("success") != true)
-				return false;
-			status = object.getString("value");
-			if (status == null || status.length() == 0
-					|| status.equals("attaching") != true)
-				return false;
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-		*/
 	}
+	
 	public boolean askAgain(String dir) {
-		// TODO Auto-generated method stub
 		System.out.println("Detached volume. Remove the directory <"+dir+">? (YES/NO)");
 		Scanner kb = new Scanner(System.in);
 		String answer = kb.next();
@@ -672,7 +642,6 @@ class AtmoAPI {
 	}
 	
 	/**
-	 * TODO: Determine when in a 'limbo' state.. When the volume is unmounted but device not detached..
 	 * Steps to unmounting a volume:
 	 * 1. Unmount from unmountdir
 	 * 2. Detach volume
@@ -684,7 +653,7 @@ class AtmoAPI {
 	public void unmountVolume(String volume, String unmountdir, String password) {
 		String sudoBegin = "echo \"" + escape(password) + "\" | sudo -S ";
 		String command = sudoBegin + "umount " + unmountdir;
-		if(AtmoCL.DEBUG) {
+		if(DEBUG) {
 			logCommand(command,password);
 		}
 		int returned = SystemCall.returnCodePipe(command);
@@ -700,13 +669,13 @@ class AtmoAPI {
 			
 			if(askAgain(unmountdir)) {
 				command = "echo \"" + AtmoAPI.escape(password) + "\" | sudo -S " + "rm -rf " + unmountdir;
-				if(AtmoCL.DEBUG) {
+				if(DEBUG) {
 					logCommand(command,password);
 				}
 				returned = SystemCall.returnCodePipe(command);
-				if(returned == 0 && AtmoCL.DEBUG) {
-					System.out.println("Removed directory");
-				}
+//				if(returned == 0 && DEBUG) {
+//					System.out.println("Removed directory");
+//				}
 			} else {
 				System.out.println("Detached volume " + volume + ".");
 			}
@@ -720,7 +689,7 @@ class AtmoAPI {
 		if (!f.exists()) {
 			String command = "echo \"" + escape(password) + "\" | sudo -S ";
 			command += "mkdir -p " + mountto;
-			if(AtmoCL.DEBUG) {
+			if(DEBUG) {
 				logCommand(command,password);
 			}
 			SystemCall.runPipeCommand(command);
@@ -736,14 +705,14 @@ class AtmoAPI {
 	}
 	public boolean mountDrive(String password, String fromdir, String mountto) {
 		String command = "echo \"" + escape(password) + "\" | sudo -S " + "/bin/mount -t ext3 "+ fromdir + " " + mountto;
-		if (AtmoCL.DEBUG) {
+		if (DEBUG) {
 			System.out.println("CMD3:"+command.replace(password, "<password>"));
 		}
 		BufferedReader br = SystemCall.runPipeCommand(command);
 		String read;
 		try {
 			while ((read = br.readLine()) != null) {
-				if (AtmoCL.DEBUG) {
+				if (DEBUG) {
 					System.out.println(read);
 				}
 				if (read.contains("error")) {
@@ -759,7 +728,7 @@ class AtmoAPI {
 		String read;
 		//String command = "/sbin/tune2fs -l " + fromdir;	
 		String command =  "echo \"" + escape(password) + "\" | sudo -S " + "/sbin/tune2fs -l " + fromdir;
-		if (AtmoCL.DEBUG) {
+		if (DEBUG) {
 			System.out.println("CMD2:"+command.replace(password, "<password>"));
 		}
 		BufferedReader br = SystemCall.runPipeCommand_err(command);
@@ -767,7 +736,7 @@ class AtmoAPI {
 		int length = 0;
 		try { 
 			while ((read = br.readLine()) != null) {
-				if (AtmoCL.DEBUG) {
+				if (DEBUG) {
 					System.out.println(read);
 				}
 				if (read.contains("Bad magic number")) {
@@ -788,12 +757,12 @@ class AtmoAPI {
 	public boolean formatDrive(String password, String fromdir) {
 		
 		String command = "echo \"" + escape(password) + "\" | sudo -S " + "/sbin/mkfs.ext3 -F " + fromdir;
-		if(AtmoCL.DEBUG) {
+		if(DEBUG) {
 			logCommand(command,password);
 		}
 		int rc = SystemCall.returnCodePipe(command);
 		if (rc == 0) {
-			if(AtmoCL.DEBUG)
+			if(DEBUG)
 				System.out.println("Formatted volume.");
 			return true;
 		}
@@ -821,11 +790,11 @@ class AtmoAPI {
 			return false;
 		}
 		String command = "echo \"" + escape(password) + "\" | sudo -S " + "chown -R " + user + ":" + group + " " + directory;
-		if (AtmoCL.DEBUG) {
+		if (DEBUG) {
 			System.out.println("CMD4:"+command.replace(password, "<password>"));
 		}
 		int retcode = SystemCall.returnCodePipe(command);
-		if (AtmoCL.DEBUG) {
+		if (DEBUG) {
 			System.out.println("Changed owner to user:" + user);
 		}
 		if(retcode != 0) {
@@ -849,7 +818,7 @@ class AtmoAPI {
 		}
 	}
 	
-	//TODO: Add this to all command debug statements for privacy: .replace(password, "<password>")
+
 	public void mountVolume(String mountfrom, String mountto, String password) {
 		String formtest;
 		boolean choice = false;
@@ -876,7 +845,7 @@ class AtmoAPI {
 		if(!choice)
 			for(String s : new String[]{"","1","2","3","4"}) {
 				s = mountfrom+s;
-				if(AtmoCL.DEBUG) {
+				if(DEBUG) {
 					System.out.println("Looking for formatted device:"+s);
 				}
 				formtest = checkFormat(password, s);
@@ -1016,23 +985,23 @@ class AtmoAPI {
 			token = (map.get("Date") != null) ? map.get("Date") : map.get("date");
 			retlist.put("X-Validation-Time", token.get(0));
 
-			if (retlist != null && !MOBILE) {
-				try {
-				File f = new File(System.getProperty("user.home")+"/.atmocl");
-				BufferedWriter out = new BufferedWriter(new FileWriter(f));
-				Date t = new Date();
-				out.write(""+t.getTime()+"\n");
-				out.write(""+retlist.get("X-Api-Server")+"\n");
-				out.write(""+retlist.get("X-Auth-Token")+"\n");
-				out.write(""+retlist.get("X-Auth-User")+"\n");
-				out.write(""+"v1"+"\n");
-				out.flush();
-				out.close();
-				if(AtmoCL.DEBUG) System.out.println("Authenticated & wrote credentials to file.");
-				System.out.println("Your credentials have been saved for the next 24 hours.");
-				}catch(Exception e){;}
-				return retlist;
-			}
+//			if (retlist != null && !MOBILE) {
+//				try {
+//				File f = new File(System.getProperty("user.home")+"/.atmocl");
+//				BufferedWriter out = new BufferedWriter(new FileWriter(f));
+//				Date t = new Date();
+//				out.write(""+t.getTime()+"\n");
+//				out.write(""+retlist.get("X-Api-Server")+"\n");
+//				out.write(""+retlist.get("X-Auth-Token")+"\n");
+//				out.write(""+retlist.get("X-Auth-User")+"\n");
+//				out.write(""+"v1"+"\n");
+//				out.flush();
+//				out.close();
+//				if(DEBUG) System.out.println("Authenticated & wrote credentials to file.");
+//				System.out.println("Your credentials have been saved for the next 24 hours.");
+//				}catch(Exception e){;}
+//				return retlist;
+//			}
 
 		} catch (Exception e) {
 			Log.e("ATMODROID", e.getMessage());
@@ -1070,7 +1039,7 @@ class AtmoAPI {
 
 			int rc = conn.getResponseCode();
 			if (rc != 200) {
-				if (AtmoCL.DEBUG) {
+				if (DEBUG) {
 					System.out.println("Invalid Response. RC="+rc);
 				}
 				if(MOBILE) {
@@ -1125,7 +1094,7 @@ class AtmoAPI {
 
 			int rc = conn.getResponseCode();
 			if (rc != 200) {
-				if(AtmoCL.DEBUG) {
+				if(DEBUG) {
 					System.out.println("Invalid Response. RC="+rc);
 				}
 				if(MOBILE) {
@@ -1187,6 +1156,42 @@ class AtmoAPI {
 		password = password.replace("\\", "\\\\");
 		return password;
 	}
+	// PARCELABLE INTEGRATION
+    @SuppressWarnings("unchecked")
+	private AtmoAPI(Parcel in) {
+        apps = (HashMap<String, AtmoApp>) in.readSerializable();
+		credentials = (HashMap<String, String>) in.readSerializable();
+		images = (HashMap<String, AtmoImage>) in.readSerializable();
+		instances = (HashMap<String, AtmoInstance>) in.readSerializable();
+		keypairs = (HashMap<String, String>) in.readSerializable();
+		validdate = (Date) in.readSerializable();
+		volumes = (HashMap<String, AtmoVolume>) in.readSerializable();
+		myserver = in.readString();
+    }
 
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeSerializable(apps);
+		dest.writeSerializable(credentials);
+		dest.writeSerializable(images);
+		dest.writeSerializable(instances);
+		dest.writeSerializable(keypairs);
+		dest.writeSerializable(validdate);
+		dest.writeSerializable(volumes);
+		dest.writeString(myserver);
+	}
+
+    public static final Parcelable.Creator<AtmoAPI> CREATOR = new Parcelable.Creator<AtmoAPI>() {
+        public AtmoAPI createFromParcel(Parcel in) {
+            return new AtmoAPI(in);
+        }
+
+        public AtmoAPI[] newArray(int size) {
+            return new AtmoAPI[size];
+        }
+    };
+	public int describeContents() {
+		return 0;
+	}
+	//END PARCELABLE INTEGRATION
 
 }

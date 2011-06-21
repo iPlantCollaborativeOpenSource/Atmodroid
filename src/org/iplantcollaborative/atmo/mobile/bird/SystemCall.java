@@ -2,21 +2,16 @@ package org.iplantcollaborative.atmo.mobile.bird;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Writer;
 
 public class SystemCall {
-
+	public static boolean DEBUG = false;
 	static String printCommand(String command) {
 		Runtime r = Runtime.getRuntime();
 		String message = "";
 		try {
-
 			Process p = r.exec(command);
 			InputStream in = p.getInputStream();
 			BufferedInputStream buf = new BufferedInputStream(in);
@@ -28,7 +23,7 @@ public class SystemCall {
 			}
 			return message;
 		} catch (Exception e) {
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				System.out.println(e.getMessage());
 		}
 		return null;
@@ -44,7 +39,7 @@ public class SystemCall {
 			BufferedReader bufferedreader = new BufferedReader(inread);
 			return bufferedreader;
 		} catch (IOException e) {
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				System.out.println(e.getMessage());
 		}
 		return null;
@@ -58,7 +53,7 @@ public class SystemCall {
 			int exitVal = p.waitFor();
 			if (exitVal != 0)
 				exitVal = p.exitValue();
-			if (AtmoCL.DEBUG) {
+			if (DEBUG) {
 				BufferedReader bash_out = new BufferedReader(
 						new InputStreamReader(in));
 				String line;
@@ -68,7 +63,7 @@ public class SystemCall {
 			}
 			return exitVal;
 		} catch (Exception e) {
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				System.out.println(e.getMessage());
 		}
 		return -999;
@@ -84,7 +79,7 @@ public class SystemCall {
 			// p.waitFor();
 			return bash_out;
 		} catch (Exception e) {
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				System.out.println(e.getMessage());
 		}
 		return null;
@@ -99,7 +94,7 @@ public class SystemCall {
 			// p.waitFor();
 			return bash_err;
 		} catch (Exception e) {
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				System.out.println(e.getMessage());
 		}
 		return null;
@@ -111,7 +106,7 @@ public class SystemCall {
 			int exitVal = p.waitFor();
 			return exitVal;
 		} catch (Exception e) {
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				System.out.println(e.getMessage());
 		}
 		return -999;
@@ -130,7 +125,7 @@ public class SystemCall {
 			writer = new BufferedWriter(new FileWriter(file));
 			writer.write(text);
 		} catch (Exception e) {
-			if (AtmoCL.DEBUG)
+			if (DEBUG)
 				e.printStackTrace();
 		} finally {
 			try {
@@ -139,7 +134,7 @@ public class SystemCall {
 					file.setExecutable();
 				}
 			} catch (IOException e) {
-				if (AtmoCL.DEBUG)
+				if (DEBUG)
 					e.printStackTrace();
 			}
 

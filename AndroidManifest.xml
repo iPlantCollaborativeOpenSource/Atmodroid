@@ -14,10 +14,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="org.iplantcollaborative.atmo.mobile.bird.AtmoDroid_ListImage"></activity>
-        <activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="org.iplantcollaborative.atmo.mobile.bird.AtmoDroid_ListApp"></activity>
-        <activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="org.iplantcollaborative.atmo.mobile.bird.AtmoDroid_ListRun"></activity>
-        <activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="org.iplantcollaborative.atmo.mobile.bird.AtmoDroid_ListPend"></activity>
-
+        <activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="org.iplantcollaborative.atmo.mobile.bird.ListInstances"></activity>
+ 		<activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="org.iplantcollaborative.atmo.mobile.bird.CreateInstance"></activity>
     </application>
 </manifest>

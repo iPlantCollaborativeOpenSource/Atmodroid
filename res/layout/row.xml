@@ -14,7 +14,21 @@
             android:layout_height="0dip"
             android:layout_weight="1"
             android:gravity="center_vertical"
+	        android:textColor="#FFF"
         />
+        <TextView
+            android:id="@+id/bottomtext"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:lines="1"
+	        android:ellipsize="marquee"
+	        android:fadingEdge="horizontal"
+	        android:marqueeRepeatLimit="marquee_forever"
+	        android:scrollHorizontally="true"
+	        android:textColor="#FFF"
+        />
+        <!--
         <TextView
             android:id="@+id/bottomtext"
             android:layout_width="fill_parent"
@@ -23,6 +37,7 @@
             android:singleLine="true"
             android:ellipsize="marquee"
         />
+        -->
     </LinearLayout>
     <ImageView
         android:id="@+id/icon2"

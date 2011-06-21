@@ -16,5 +16,6 @@
     <string name="imagesButtonText">Images</string>
     <string name="appsButtonText">Apps</string>
     <string name="homebutton">Return to Home</string>
-    <string name="main_no_instances">No Instances Found.</string>
+    <string name="main_no_instances">No Instances Found. Press Menu to create an Instance.</string>
+    <string name="main_no_c_instances">No Apps Found. Press Refresh.</string>
 </resources>

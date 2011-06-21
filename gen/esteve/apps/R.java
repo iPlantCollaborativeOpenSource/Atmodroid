@@ -20,17 +20,20 @@ public final class R {
         public static final int atmoslogo_focused=0x7f020006;
         public static final int atmoslogo_normal=0x7f020007;
         public static final int atmoslogo_pressed=0x7f020008;
-        public static final int icon=0x7f020009;
-        public static final int icon_bg=0x7f02000a;
-        public static final int icon_login=0x7f02000b;
-        public static final int icon_login_focus=0x7f02000c;
-        public static final int icon_logout=0x7f02000d;
-        public static final int icon_logout_focus=0x7f02000e;
-        public static final int login_button=0x7f02000f;
-        public static final int logout_button=0x7f020010;
-        public static final int pending=0x7f020011;
-        public static final int running=0x7f020012;
-        public static final int shutting_down=0x7f020013;
+        public static final int ic_menu_add=0x7f020009;
+        public static final int ic_menu_revert=0x7f02000a;
+        public static final int ic_menu_rotate=0x7f02000b;
+        public static final int icon=0x7f02000c;
+        public static final int icon_bg=0x7f02000d;
+        public static final int icon_login=0x7f02000e;
+        public static final int icon_login_focus=0x7f02000f;
+        public static final int icon_logout=0x7f020010;
+        public static final int icon_logout_focus=0x7f020011;
+        public static final int login_button=0x7f020012;
+        public static final int logout_button=0x7f020013;
+        public static final int pending=0x7f020014;
+        public static final int running=0x7f020015;
+        public static final int shutting_down=0x7f020016;
     }
     public static final class id {
         public static final int block1=0x7f050003;
@@ -56,10 +59,11 @@ public final class R {
         public static final int username=0x7f050004;
     }
     public static final class layout {
-        public static final int instance_list=0x7f030000;
-        public static final int loginmain=0x7f030001;
-        public static final int main=0x7f030002;
-        public static final int row=0x7f030003;
+        public static final int createinstance=0x7f030000;
+        public static final int listinstances=0x7f030001;
+        public static final int loginmain=0x7f030002;
+        public static final int main=0x7f030003;
+        public static final int row=0x7f030004;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
@@ -71,6 +75,7 @@ public final class R {
         public static final int imagesButtonText=0x7f04000d;
         public static final int listRemoveText=0x7f04000a;
         public static final int loginRequired=0x7f040008;
+        public static final int main_no_c_instances=0x7f040011;
         public static final int main_no_instances=0x7f040010;
         public static final int passwordlabel=0x7f040002;
         public static final int pendingButtonText=0x7f04000b;

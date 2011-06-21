@@ -1,8 +1,22 @@
 package org.iplantcollaborative.atmo.mobile.bird;
 
-public class AtmoObject {
+import java.io.Serializable;
+import java.net.URLDecoder;
+
+@SuppressWarnings("serial")
+public class AtmoObject implements Serializable {
 	private String id, name, desc, tags;
 
+	public static String removeTags(String str) {
+		str = str.replaceAll("\\<.*?>","");
+		try {
+			str = str.replace("&ldquo;","\"");
+			str = str.replace("&rdquo;","\"");
+			str = URLDecoder.decode(str);
+		}catch(Exception e){;}
+		return str;
+	}
+	
 	public AtmoObject(String id, String name, String desc, String tags) {
 		super();
 		this.id = id;
@@ -45,6 +59,7 @@ public class AtmoObject {
 
 }
 
+@SuppressWarnings("serial")
 class AtmoApp extends AtmoObject {
 	String type, platform, create_time, icon_path, machine_image_id, creator, ramdisk_id, min_req, category, kernelid, version;
 	boolean is_sys_app;
@@ -142,32 +157,44 @@ class AtmoApp extends AtmoObject {
 		this.is_sys_app = is_sys_app;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "AtmoApp [type=" + type + ", platform=" + platform
+//				+ ", create_time=" + create_time + ", name=" + getName()
+//				+ ", icon_path=" + icon_path + ", machine_image_id="
+//				+ machine_image_id + ", creator=" + creator + ", tags=" + getTags()
+//				+ ", description=" + getDesc() + ", ramdisk_id=" + ramdisk_id
+//				+ ", min_req=" + min_req + ", category=" + category
+//				+ ", kernelid=" + kernelid + ", version=" + version
+//				+ ", appid=" + getId() + ", is_sys_app=" + is_sys_app
+//				+ ", getType()=" + getType() + ", getPlatform()="
+//				+ getPlatform() + ", getCreate_time()=" + getCreate_time()
+//				+ ", getName()=" + getName() + ", getIcon_path()="
+//				+ getIcon_path() + ", getMachine_image_id()="
+//				+ getMachine_image_id() + ", getCreator()=" + getCreator()
+//				+ ", getTags()=" + getTags() + ", getDescription()="
+//				+ getDesc() + ", getRamdisk_id()=" + getRamdisk_id()
+//				+ ", getMin_req()=" + getMin_req() + ", getCategory()="
+//				+ getCategory() + ", getKernelid()=" + getKernelid()
+//				+ ", getVersion()=" + getVersion() + ", getAppid()="
+//				+ getId() + ", isIs_sys_app()=" + isIs_sys_app()
+//				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
+//				+ ", toString()=" + super.toString() + "]";
+//	}
+	
 	@Override
 	public String toString() {
-		return "AtmoApp [type=" + type + ", platform=" + platform
-				+ ", create_time=" + create_time + ", name=" + getName()
-				+ ", icon_path=" + icon_path + ", machine_image_id="
-				+ machine_image_id + ", creator=" + creator + ", tags=" + getTags()
-				+ ", description=" + getDesc() + ", ramdisk_id=" + ramdisk_id
-				+ ", min_req=" + min_req + ", category=" + category
-				+ ", kernelid=" + kernelid + ", version=" + version
-				+ ", appid=" + getId() + ", is_sys_app=" + is_sys_app
-				+ ", getType()=" + getType() + ", getPlatform()="
-				+ getPlatform() + ", getCreate_time()=" + getCreate_time()
-				+ ", getName()=" + getName() + ", getIcon_path()="
-				+ getIcon_path() + ", getMachine_image_id()="
-				+ getMachine_image_id() + ", getCreator()=" + getCreator()
-				+ ", getTags()=" + getTags() + ", getDescription()="
-				+ getDesc() + ", getRamdisk_id()=" + getRamdisk_id()
-				+ ", getMin_req()=" + getMin_req() + ", getCategory()="
-				+ getCategory() + ", getKernelid()=" + getKernelid()
-				+ ", getVersion()=" + getVersion() + ", getAppid()="
-				+ getId() + ", isIs_sys_app()=" + isIs_sys_app()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+		return "AtmoApp {"
+		+ "\n\tName: " + getName()
+		+ "\n\tPlatform: " + platform
+		+ "\n\tDescription: " + removeTags(getDesc())
+		+ "\n\t---Debug Information---"
+		+ "\n\tMachine Image ID: " + machine_image_id
+		+ "\n\tMinimum Requirement: " + min_req
+		+ "\n}";
 	}
 }
-
+@SuppressWarnings("serial")
 class AtmoImage extends AtmoObject {
 
 	private String location, owner, state, arch, type, ramdisk, kernel;
@@ -232,6 +259,7 @@ class AtmoImage extends AtmoObject {
 	
 }
 
+@SuppressWarnings("serial")
 class AtmoInstance extends AtmoObject {
 	String instance_state, instance_ami_launch_index, instance_placement,
 			instance_product_codes, group_id, reservation_owner_id,
@@ -239,7 +267,7 @@ class AtmoInstance extends AtmoObject {
 			instance_key_name, instance_kernel, instance_ramdisk,
 			instance_image_id, instance_num, instance_image_name,
 			instance_public_dns_name, instance_instance_type;
-
+	
 	public AtmoInstance(String instance_state, String instance_description,
 			String instance_tags, String instance_ami_launch_index,
 			String instance_placement, String instance_product_codes,
@@ -409,29 +437,53 @@ class AtmoInstance extends AtmoObject {
 
 	@Override
 	public String toString() {
-		return "AtmoInstance [instance_state=" + instance_state
-				+ ", instance_description=" + getDesc()
-				+ ", instance_tags=" + getTags()
-				+ ", instance_ami_launch_index=" + instance_ami_launch_index
-				+ ", instance_placement=" + instance_placement
-				+ ", instance_product_codes=" + instance_product_codes
-				+ ", group_id=" + group_id + ", reservation_owner_id="
-				+ reservation_owner_id + ", reservation_id=" + reservation_id
-				+ ", instance_private_dns_name=" + instance_private_dns_name
-				+ ", instance_name=" + getName()
-				+ ", instance_launch_time=" + instance_launch_time
-				+ ", instance_key_name=" + instance_key_name
-				+ ", instance_kernel=" + instance_kernel
-				+ ", instance_ramdisk=" + instance_ramdisk
-				+ ", instance_image_id=" + instance_image_id
-				+ ", instance_num=" + instance_num + ", instance_image_name="
-				+ instance_image_name + ", instance_public_dns_name="
-				+ instance_public_dns_name + ", instance_id=" + getId()
-				+ ", instance_instance_type=" + instance_instance_type + "]";
+		return "AtmoInstance {"
+		+ "\n\tName: " + getName()
+		+ "\n\tInstance ID: " + getId()
+		+ "\n\tStatus: " + instance_state
+		+ "\n\tPublic IP: " + instance_public_dns_name 
+		+ "\n\tType: " + instance_instance_type 
+		+ "\n\t---Debug Information---"
+		+ "\n\tKernel ID: " + instance_kernel
+		+ "\n\tRamdisk ID: " + instance_ramdisk
+		+ "\n\tImage ID: " + instance_image_id
+		+ "\n\tLaunched at: " + formatDateString(instance_launch_time)
+		+ "\n}";
+	}
+//	public String toString() {
+//		return "AtmoInstance [instance_state=" + instance_state
+//				+ ", instance_description=" + getDesc()
+//				+ ", instance_tags=" + getTags()
+//				+ ", instance_ami_launch_index=" + instance_ami_launch_index
+//				+ ", instance_placement=" + instance_placement
+//				+ ", instance_product_codes=" + instance_product_codes
+//				+ ", group_id=" + group_id 
+//				+ ", reservation_owner_id=" + reservation_owner_id 
+//				+ ", reservation_id=" + reservation_id
+//				+ ", instance_private_dns_name=" + instance_private_dns_name
+//				+ ", instance_name=" + getName()
+//				+ ", instance_launch_time=" + instance_launch_time
+//				+ ", instance_key_name=" + instance_key_name
+//				+ ", instance_kernel=" + instance_kernel
+//				+ ", instance_ramdisk=" + instance_ramdisk
+//				+ ", instance_image_id=" + instance_image_id
+//				+ ", instance_num=" + instance_num 
+//				+ ", instance_image_name=" + instance_image_name 
+//				+ ", instance_public_dns_name=" + instance_public_dns_name 
+//				+ ", instance_id=" + getId()
+//				+ ", instance_instance_type=" + instance_instance_type + "]";
+//	}
+
+	private String formatDateString(String str) {
+		if(str.contains("Z") && str.contains("T"))
+			return str.substring(0,str.indexOf("T"))+" @ "+str.substring(str.indexOf("T")+1,str.indexOf("Z"));
+		else
+			return str;
 	}
 
 }
 
+@SuppressWarnings("serial")
 class AtmoVolume extends AtmoObject {
 	String  attach_data_device, status, 
 			create_time, attach_data_attach_time, snapshot_id,
