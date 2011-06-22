@@ -1,7 +1,8 @@
 package org.iplantcollaborative.atmo.mobile.bird;
-import java.util.ArrayList;
 
-import esteve.apps.R;
+import org.iplantcollaborative.atmo.mobile.bird.R;
+
+import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;

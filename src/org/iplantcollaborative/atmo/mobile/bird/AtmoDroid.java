@@ -1,5 +1,6 @@
 package org.iplantcollaborative.atmo.mobile.bird;
 
+import org.iplantcollaborative.atmo.mobile.bird.R;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -23,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.Toast;
-import esteve.apps.R;
 
 public class AtmoDroid extends Activity {
 	public static final String TAG = "AtmoDroid";

@@ -37,6 +37,16 @@ To manually install the .apk file:
 * Device must allow installation of applications from unknown sources.
 Settings-->Applications-->'Unknown sources'-->OK
 
+==ERROR (IN ECLIPSE)
+When copying this code in to eclipse, it is common to see the following errors:
+	/gen already exists but is not a source folder. Convert to a source folder or rename it.
+	R.java was removed! Recreating R.java!
+	Unable to open class file R.java: No such file or directory
+To fix these errors:
+	select Project-> Clean and clean the project
+	Restart eclipse
+	Delete the gen folder
+	After regenerating the file, the project should compile
 ==ISSUES/BUGS/QUESTIONS
 Use the issue tracker available from the GitHub repository at the link listed under SOURCE above. Click Issues to submit a question or report a problem.
 

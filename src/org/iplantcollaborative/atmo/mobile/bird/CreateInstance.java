@@ -1,4 +1,7 @@
 package org.iplantcollaborative.atmo.mobile.bird;
+
+import org.iplantcollaborative.atmo.mobile.bird.R;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,8 +32,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import esteve.apps.R;
-
 public class CreateInstance extends ListActivity {
   private ProgressDialog m_ProgressDialog = null;
   private ArrayList<AtmoApp> m_orders = null;
