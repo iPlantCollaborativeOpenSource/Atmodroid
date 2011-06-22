@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package esteve.apps;
+package org.iplantcollaborative.atmo.mobile.bird;
 
 public final class R {
     public static final class attr {
