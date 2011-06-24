@@ -18,4 +18,39 @@
     <string name="homebutton">Return to Home</string>
     <string name="main_no_instances">No Instances Found. Press Menu to create an Instance.</string>
     <string name="main_no_c_instances">No Apps Found. Press Refresh.</string>
+    <string name="rf_username_label">Username: Your iPlant Username</string>
+    <string name="rf_username_hint">Username:</string>
+    <string name="rf_imagename_label">Name of the Image: Please limit the name to 15 characters</string>
+    <string name="rf_imagename_hint">Image Name:</string>
+    <string name="rf_imagedesc_label">Description of the Image: \n
+    This text will appear in Atmosphere\'s user interface.\n
+      It should concisely describe the tools installed,\n
+      their purpose (e.g. "This image performs X analysis"),\n
+      and intent of the VM (e.g. "designed for XYZ workshop")</string>
+    <string name="rf_imagedesc_hint">Image Description:</string>
+    <string name="rf_imagesw_label">
+    List installed software: \n
+    List any software that you have installed\n
+    Include paths to the executables if they are not found in (/usr/bin) or (/usr/local/bin).</string>
+    <string name="rf_imagesw_hint">Installed Software List:</string>
+    <string name="rf_ebsmount_label">
+    Unmount EBS Volumes: \n
+    If you have an EBS volume mounted, please unmount it or enter the mount point.</string>
+    <string name="rf_ebsmount_hint">EBS Mount points (If applicable):</string>
+    <string name="rf_sysfile_label">
+    iPlant-managed System Files: \n
+    If your VM image requires a change in an iPlant-managed system, list changes and why they are necessary.</string>
+    <string name="rf_sysfile_hint">System Files I Changed:</string>
+    <string name="rf_imagetag_label">
+    Image Tags: \n
+    Atmosphere supports tags for searching;\n
+    List relevant tags for this VM image.</string>
+    <string name="rf_imagetag_hint">Image Tags:</string>
+    <string name="rf_imagevis_label">
+    Image Visibility:\n
+    VM images can be made visible to you, a select group of users or to everyone.\n
+    If you want visibility restricted to a select group of users, provide a list of iPlant usernames.\n
+    Public visibility means that any user will be able to launch the instance.</string>
+    <string name="rf_imagevis_hint">Image Visibility:</string>
+    <string name="rf_submit_text">E-Mail Support</string>
 </resources>

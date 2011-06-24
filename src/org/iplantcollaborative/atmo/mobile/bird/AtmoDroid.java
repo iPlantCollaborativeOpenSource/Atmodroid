@@ -24,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 public class AtmoDroid extends Activity {
 	public static final String TAG = "AtmoDroid";
 	

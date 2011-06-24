@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+	<LinearLayout android:id="@+id/linearLayout1" android:layout_width="match_parent" android:orientation="vertical" android:layout_height="match_parent">
+
+ 		<TextView android:id="@+id/rf_username_label" android:text="@string/rf_username_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_username_edit" android:layout_height="wrap_content" android:layout_width="match_parent" android:hint="@string/rf_username_hint" android:text=""></EditText>
+
+		<TextView android:id="@+id/rf_imagename_label" android:text="@string/rf_imagename_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_imagename_edit" android:hint="@string/rf_imagename_hint" android:layout_height="wrap_content" android:layout_width="match_parent" android:text=""></EditText>
+
+		<TextView android:id="@+id/rf_imagedesc_label" android:text="@string/rf_imagedesc_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_imagedesc_edit" android:hint="@string/rf_imagedesc_hint" android:layout_height="wrap_content" android:layout_width="match_parent" android:text=""></EditText>
+
+		<TextView android:id="@+id/rf_imagesw_label" android:text="@string/rf_imagesw_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_imagesw_edit" android:hint="@string/rf_imagesw_hint" android:layout_height="wrap_content" android:layout_width="match_parent" android:text=""></EditText>
+
+		<TextView android:id="@+id/rf_ebsmount_label" android:text="@string/rf_ebsmount_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_ebsmount_edit" android:hint="@string/rf_ebsmount_hint" android:layout_height="wrap_content" android:layout_width="match_parent" android:text=""></EditText>
+
+		<TextView android:id="@+id/rf_sysfile_label" android:text="@string/rf_sysfile_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_sysfile_edit" android:hint="@string/rf_sysfile_hint" android:layout_height="wrap_content" android:layout_width="match_parent" android:text=""></EditText>
+
+		<TextView android:id="@+id/rf_imagetag_label" android:text="@string/rf_imagetag_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_imagetag_edit" android:hint="@string/rf_imagetag_hint" android:layout_height="wrap_content" android:layout_width="match_parent" android:text=""></EditText>
+
+		<TextView android:id="@+id/rf_imagevis_label" android:text="@string/rf_imagevis_label" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
+		<EditText android:id="@+id/rf_imagevis_edit" android:hint="@string/rf_imagevis_hint" android:layout_height="wrap_content" android:layout_width="match_parent" android:text=""></EditText>
+
+		<Button android:id="@+id/rf_submit" android:text="@string/rf_submit_text" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center_horizontal"></Button>
+
+	</LinearLayout>
+	  
+</ScrollView>
