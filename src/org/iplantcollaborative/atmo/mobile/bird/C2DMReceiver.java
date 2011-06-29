@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import org.iplantcollaborative.atmo.mobile.bird.*;
 
 public class C2DMReceiver extends C2DMBaseReceiver {
 	private static final String TAG = "AtmoDroid";
