@@ -2,7 +2,6 @@ package org.iplantcollaborative.atmo.mobile.bird;
 
 import org.iplantcollaborative.atmo.mobile.bird.R;
 
-import com.google.android.apps.c2dm.C2DMessaging;
 
 import android.app.Activity;
 import android.app.Notification;

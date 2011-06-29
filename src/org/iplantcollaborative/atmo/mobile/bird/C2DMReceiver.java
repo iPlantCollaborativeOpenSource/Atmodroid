@@ -2,7 +2,7 @@
  *  @Author:Steven "esteve" Gregory
  *    @Date:Jun 24, 2011 - 1:42:48 PM
  */
-package com.google.android.apps.c2dm;
+package org.iplantcollaborative.atmo.mobile.bird;
 
 import android.app.Notification;
 import android.app.NotificationManager;

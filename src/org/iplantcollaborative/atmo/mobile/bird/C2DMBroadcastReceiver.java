@@ -2,7 +2,7 @@
  *  @Author:Steven "esteve" Gregory
  *    @Date:Jun 24, 2011 - 1:40:47 PM
  */
-package com.google.android.apps.c2dm;
+package org.iplantcollaborative.atmo.mobile.bird;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -2,7 +2,7 @@
  *  @Author:Steven "esteve" Gregory
  *    @Date:Jun 24, 2011 - 1:39:56 PM
  */
-package com.google.android.apps.c2dm;
+package org.iplantcollaborative.atmo.mobile.bird;
 
 /*
  * Copyright 2010 Google Inc.
