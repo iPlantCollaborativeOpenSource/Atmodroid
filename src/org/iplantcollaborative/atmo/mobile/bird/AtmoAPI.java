@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-class AtmoAPI implements Parcelable {
+public class AtmoAPI implements Parcelable {
 	private static final boolean MOBILE = true;
 	private static final boolean DEBUG = false;
 	private static final String TAG = "AtmoDroid";
@@ -38,7 +39,7 @@ class AtmoAPI implements Parcelable {
 	private HashMap<String, String> keypairs;
 	private HashMap<String, AtmoApp> apps;
 	private HashMap<String, AtmoVolume> volumes;
-
+	private String registrationID;
 
 	public AtmoAPI(String myserver) {
 		validdate = null;
@@ -55,7 +56,7 @@ class AtmoAPI implements Parcelable {
 		return credentials.get("X-Auth-Token");
 	}
 
-	protected String getUser() {
+	public String getUser() {
 		return credentials.get("X-Auth-User");
 	}
 
@@ -66,15 +67,16 @@ class AtmoAPI implements Parcelable {
 	protected void setDate(Date d) {
 		validdate = d;
 	}
-	
-	public void setCredentials(String server, String token, String user, String version) {
+
+	public void setCredentials(String server, String token, String user,
+			String version) {
 		this.credentials = new HashMap<String, String>();
 		this.credentials.put("X-Api-Server", server);
 		this.credentials.put("X-Auth-Token", token);
 		this.credentials.put("X-Auth-User", user);
 		this.credentials.put("X-Api-Version", version);
 	}
-	
+
 	public HashMap<String, AtmoApp> getApps() {
 		authIfNotValid();
 		apps = new HashMap<String, AtmoApp>();
@@ -150,12 +152,11 @@ class AtmoAPI implements Parcelable {
 				String strname = ai.getName();
 				testname = strname;
 				prefix = 2;
-				while(nmap.get(testname) != null)
-				{
-					testname = strname+" ("+prefix+")";
+				while (nmap.get(testname) != null) {
+					testname = strname + " (" + prefix + ")";
 					prefix++;
 				}
-				nmap.put(testname, ai);	
+				nmap.put(testname, ai);
 			}
 		}
 		return nmap;
@@ -173,7 +174,7 @@ class AtmoAPI implements Parcelable {
 		for (String iname : map.keySet()) {
 			ai = map.get(iname);
 			if (ai.getInstance_state().equals("pending") == true) {
-				nmap.put(iname,ai);
+				nmap.put(iname, ai);
 			}
 		}
 		return nmap;
@@ -235,15 +236,14 @@ class AtmoAPI implements Parcelable {
 			/* Iterate apps, save */
 			for (int i = 0; i < value.length(); i++) {
 				temp = value.getJSONObject(i);
-				test = base = temp.getString("application_name"); 
+				test = base = temp.getString("application_name");
 				prefix = 2;
-				while(apps.get(test) != null) {
-					test = base + " ("+ prefix++ +")";
+				while (apps.get(test) != null) {
+					test = base + " (" + prefix++ + ")";
 				}
 				aa = new AtmoApp(temp.getString("application_type"),
 						temp.getString("platform"),
-						temp.getString("application_created"),
-						test,
+						temp.getString("application_created"), test,
 						temp.getString("application_icon_path"),
 						temp.getString("machine_image_id"),
 						temp.getString("application_creator"),
@@ -257,7 +257,7 @@ class AtmoAPI implements Parcelable {
 						temp.getString("application_id"),
 						temp.getBoolean("is_sys_app"));
 				apps.put(test, aa);
-				
+
 			}
 		} catch (Exception e) {
 			;
@@ -266,14 +266,20 @@ class AtmoAPI implements Parcelable {
 
 	public String launchApp(String name, AtmoApp aa, String keypair) {
 		String urlex = "launchApp";
-		String params = "image_id=" + aa.getMachine_image_id()
-				+ "&instance_size=m1.small&instance_name=" + name
-				+ "&application_id=" + aa.getId();
+		String callback_url = "http://quentin.iplantcollaborative.org/c2dm/C2DM.php?user="+getUser()+"&msg=TEST";
 		try {
-			Log.v(TAG,"POST: Params="+params);
+			String params = "image_id="
+				+ URLEncoder.encode(aa.getMachine_image_id(), "UTF-8")
+				+ "&instance_size=m1.small&instance_name="
+				+ URLEncoder.encode(name, "UTF-8")
+				+ "&application_id="
+				+ URLEncoder.encode(aa.getId(), "UTF-8")
+				+ "&callback_resource_url="
+				+ URLEncoder.encode(callback_url, "UTF-8");
+			Log.v(TAG, "POST: Params=" + params);
 			String JSON = atmo_POST_to_JSON(urlex, params);
 			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
-			Log.v(TAG,"POST:"+urlex+" END.");
+			Log.v(TAG, "POST:" + urlex + " END.");
 			JSONObject object = orig.getJSONObject("result");
 			String instance_ID = object.getString("value");
 			if (instance_ID != null)
@@ -333,7 +339,7 @@ class AtmoAPI implements Parcelable {
 			JSONArray value = result.getJSONArray("value");
 			JSONObject temp;
 			AtmoImage ai;
-			String base,test;
+			String base, test;
 			int x = 1;
 			for (int i = 0; i < value.length(); i++) {
 				temp = value.getJSONObject(i);
@@ -341,8 +347,8 @@ class AtmoAPI implements Parcelable {
 				if (base.equals(""))
 					base = "Unnamed Image";
 				test = base;
-				while(images.get(test) != null) {
-					test = base+" ("+ ++x +")";
+				while (images.get(test) != null) {
+					test = base + " (" + ++x + ")";
 				}
 				ai = new AtmoImage(
 						test,
@@ -385,9 +391,8 @@ class AtmoAPI implements Parcelable {
 				temp = value.getJSONObject(i);
 				test = base = temp.getString("instance_name");
 				prefix = 2;
-				while(instances.get(test) != null)
-				{
-					test = base+" ("+prefix+++")";
+				while (instances.get(test) != null) {
+					test = base + " (" + prefix++ + ")";
 				}
 				ai = new AtmoInstance(temp.getString("instance_state"),
 						temp.getString("instance_description"),
@@ -398,8 +403,7 @@ class AtmoAPI implements Parcelable {
 						temp.getString("group_id"),
 						temp.getString("reservation_owner_id"),
 						temp.getString("reservation_id"),
-						temp.getString("instance_private_dns_name"),
-						test,
+						temp.getString("instance_private_dns_name"), test,
 						temp.getString("instance_launch_time"),
 						temp.getString("instance_key_name"),
 						temp.getString("instance_kernel"),
@@ -410,7 +414,7 @@ class AtmoAPI implements Parcelable {
 						temp.getString("instance_public_dns_name"),
 						temp.getString("instance_id"),
 						temp.getString("instance_instance_type"));
-				
+
 				instances.put(test, ai);
 
 			}
@@ -424,22 +428,23 @@ class AtmoAPI implements Parcelable {
 			String keypair) {
 		String instance_id = null;
 		String urlex = "launchInstance";
-
+		String callback_url = "http://quentin.iplantcollaborative.org/c2dm/C2DM.php";
 		try {
 			/* URL Encode variables */
-			keypair = (keypair == null) ? "" : URLEncoder
-					.encode(keypair, "UTF-8");
-			String params = (
-					"instance_name=" + URLEncoder.encode(inst_name, "UTF-8") + 
-					"&instance_size="+ URLEncoder.encode("m1.small", "UTF-8") + 
-					"&image_id=" + URLEncoder.encode(image.getId(), "UTF-8") + 
-					"&auth_key=" + keypair + 
-					"&num_of_instances=" + "1" + 
-					"&instance_description=" + URLEncoder.encode("Launched via AtmoDroid", "UTF-8") + 
-					"&instance_tags=" + URLEncoder.encode("Droid", "UTF-8"));
-			Log.v(TAG,"POST: Params="+params);
+			keypair = (keypair == null) ? "" : URLEncoder.encode(keypair,
+					"UTF-8");
+			String params = ("instance_name="
+					+ URLEncoder.encode(inst_name, "UTF-8") + "&instance_size="
+					+ URLEncoder.encode("m1.small", "UTF-8") + "&image_id="
+					+ URLEncoder.encode(image.getId(), "UTF-8") + "&auth_key="
+					+ keypair + "&num_of_instances=" + "1"
+					+ "&instance_description="
+					+ URLEncoder.encode("Launched via AtmoDroid", "UTF-8")
+					+ "&instance_tags=" + URLEncoder.encode("Droid", "UTF-8"))
+					+ "&callback_resource_url=" + URLEncoder.encode(callback_url, "UTF-8");
+			Log.v(TAG, "POST: Params=" + params);
 			String JSON = atmo_POST_to_JSON(urlex, params);
-			Log.v(TAG,"POST:"+urlex+" END.");
+			Log.v(TAG, "POST:" + urlex + " END.");
 			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
 			// Result Object
 			JSONObject object = orig.getJSONObject("result");
@@ -447,7 +452,7 @@ class AtmoAPI implements Parcelable {
 			String status = object.getString("code");
 			if (status.equals("success"))
 				instance_id = object.getString("value");
-			
+
 			return instance_id;
 		} catch (Exception e) {
 			return null;
@@ -460,9 +465,9 @@ class AtmoAPI implements Parcelable {
 		String params = "instance_id=" + instance_id;
 		String JSON = null;
 		try {
-			Log.v(TAG,"POST: Params="+params);
+			Log.v(TAG, "POST: Params=" + params);
 			JSON = atmo_POST_to_JSON(urlex, params);
-			Log.v(TAG,"POST:"+urlex+" END.");
+			Log.v(TAG, "POST:" + urlex + " END.");
 			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
 			JSONObject object = orig.getJSONObject("result");
 			String status = object.getString("code");
@@ -582,17 +587,20 @@ class AtmoAPI implements Parcelable {
 			if (status == null || status.length() == 0
 					|| status.equals("success") != true)
 				return false;
-			/*status = object.getString("value");
-			if (status == null || status.length() == 0
-					|| status.equals("attached") != true)
-				return false;*/
+			/*
+			 * status = object.getString("value"); if (status == null ||
+			 * status.length() == 0 || status.equals("attached") != true) return
+			 * false;
+			 */
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 
 	}
-	public boolean attachVolume(String instance_id, String volume_id, String device) {
+
+	public boolean attachVolume(String instance_id, String volume_id,
+			String device) {
 		String params;
 		try {
 			params = ("device=" + URLEncoder.encode(device, "UTF-8")
@@ -624,28 +632,29 @@ class AtmoAPI implements Parcelable {
 		}
 
 	}
+
 	public boolean attachVolume(String instance_id, String volume_id) {
 		return attachVolume(instance_id, volume_id, "sdb");
 	}
-	
+
 	public boolean askAgain(String dir) {
-		System.out.println("Detached volume. Remove the directory <"+dir+">? (YES/NO)");
+		System.out.println("Detached volume. Remove the directory <" + dir
+				+ ">? (YES/NO)");
 		Scanner kb = new Scanner(System.in);
 		String answer = kb.next();
 		return (answer.equals("YES"));
 	}
-	
+
 	public static void logCommand(String command, String password) {
-		if(password != "")
+		if (password != "")
 			command = command.replace(password, "<password>");
-		System.out.println("CMD:"+command);
+		System.out.println("CMD:" + command);
 	}
-	
+
 	/**
-	 * Steps to unmounting a volume:
-	 * 1. Unmount from unmountdir
-	 * 2. Detach volume
+	 * Steps to unmounting a volume: 1. Unmount from unmountdir 2. Detach volume
 	 * 3. Remove 'unmountdir' directory
+	 * 
 	 * @param volume
 	 * @param unmountdir
 	 * @param password
@@ -653,29 +662,31 @@ class AtmoAPI implements Parcelable {
 	public void unmountVolume(String volume, String unmountdir, String password) {
 		String sudoBegin = "echo \"" + escape(password) + "\" | sudo -S ";
 		String command = sudoBegin + "umount " + unmountdir;
-		if(DEBUG) {
-			logCommand(command,password);
+		if (DEBUG) {
+			logCommand(command, password);
 		}
 		int returned = SystemCall.returnCodePipe(command);
-		if(returned == 0) {
-			System.out.println("Un-Mounted volume from " +unmountdir);
-			System.out.println("Sending detach request. Waiting for reply..(10seconds)");
+		if (returned == 0) {
+			System.out.println("Un-Mounted volume from " + unmountdir);
+			System.out
+					.println("Sending detach request. Waiting for reply..(10seconds)");
 			waitFor(10);
 			if (!detachVolume(volume)) {
 				System.out.println("Failed to detach volume. Retry command.");
 				return;
 			}
 			System.out.println("Detached volume " + volume + ".");
-			
-			if(askAgain(unmountdir)) {
-				command = "echo \"" + AtmoAPI.escape(password) + "\" | sudo -S " + "rm -rf " + unmountdir;
-				if(DEBUG) {
-					logCommand(command,password);
+
+			if (askAgain(unmountdir)) {
+				command = "echo \"" + AtmoAPI.escape(password)
+						+ "\" | sudo -S " + "rm -rf " + unmountdir;
+				if (DEBUG) {
+					logCommand(command, password);
 				}
 				returned = SystemCall.returnCodePipe(command);
-//				if(returned == 0 && DEBUG) {
-//					System.out.println("Removed directory");
-//				}
+				// if(returned == 0 && DEBUG) {
+				// System.out.println("Removed directory");
+				// }
 			} else {
 				System.out.println("Detached volume " + volume + ".");
 			}
@@ -683,30 +694,33 @@ class AtmoAPI implements Parcelable {
 			System.out.println("Error unmounting volume");
 		}
 	}
-	
+
 	public boolean makeDir(String password, String mountto) {
 		File f = new File(mountto);
 		if (!f.exists()) {
 			String command = "echo \"" + escape(password) + "\" | sudo -S ";
 			command += "mkdir -p " + mountto;
-			if(DEBUG) {
-				logCommand(command,password);
+			if (DEBUG) {
+				logCommand(command, password);
 			}
 			SystemCall.runPipeCommand(command);
 		} else {
 			return true;
 		}
 		waitFor(3);
-		if(SystemCall.returnCode("find "+mountto) != 0) {
+		if (SystemCall.returnCode("find " + mountto) != 0) {
 			return false;
 		} else {
 			return true;
 		}
 	}
+
 	public boolean mountDrive(String password, String fromdir, String mountto) {
-		String command = "echo \"" + escape(password) + "\" | sudo -S " + "/bin/mount -t ext3 "+ fromdir + " " + mountto;
+		String command = "echo \"" + escape(password) + "\" | sudo -S "
+				+ "/bin/mount -t ext3 " + fromdir + " " + mountto;
 		if (DEBUG) {
-			System.out.println("CMD3:"+command.replace(password, "<password>"));
+			System.out.println("CMD3:"
+					+ command.replace(password, "<password>"));
 		}
 		BufferedReader br = SystemCall.runPipeCommand(command);
 		String read;
@@ -716,25 +730,31 @@ class AtmoAPI implements Parcelable {
 					System.out.println(read);
 				}
 				if (read.contains("error")) {
-					System.out.println("Volume is formatted, but failed to mount to " + fromdir);
+					System.out
+							.println("Volume is formatted, but failed to mount to "
+									+ fromdir);
 					return false;
 				}
 			}
-		}catch(Exception e){return false;}
+		} catch (Exception e) {
+			return false;
+		}
 		return true;
 	}
-	
+
 	public String checkFormat(String password, String fromdir) {
 		String read;
-		//String command = "/sbin/tune2fs -l " + fromdir;	
-		String command =  "echo \"" + escape(password) + "\" | sudo -S " + "/sbin/tune2fs -l " + fromdir;
+		// String command = "/sbin/tune2fs -l " + fromdir;
+		String command = "echo \"" + escape(password) + "\" | sudo -S "
+				+ "/sbin/tune2fs -l " + fromdir;
 		if (DEBUG) {
-			System.out.println("CMD2:"+command.replace(password, "<password>"));
+			System.out.println("CMD2:"
+					+ command.replace(password, "<password>"));
 		}
 		BufferedReader br = SystemCall.runPipeCommand_err(command);
-	
+
 		int length = 0;
-		try { 
+		try {
 			while ((read = br.readLine()) != null) {
 				if (DEBUG) {
 					System.out.println(read);
@@ -746,144 +766,152 @@ class AtmoAPI implements Parcelable {
 					return "missing";
 				}
 				length++;
-			} 
-			//if (length == 1) {
-			//	return "empty";
-			//}
+			}
+			// if (length == 1) {
+			// return "empty";
+			// }
 			return "formatted";
-		}catch(Exception e) {return "error";}
+		} catch (Exception e) {
+			return "error";
+		}
 	}
-	
+
 	public boolean formatDrive(String password, String fromdir) {
-		
-		String command = "echo \"" + escape(password) + "\" | sudo -S " + "/sbin/mkfs.ext3 -F " + fromdir;
-		if(DEBUG) {
-			logCommand(command,password);
+
+		String command = "echo \"" + escape(password) + "\" | sudo -S "
+				+ "/sbin/mkfs.ext3 -F " + fromdir;
+		if (DEBUG) {
+			logCommand(command, password);
 		}
 		int rc = SystemCall.returnCodePipe(command);
 		if (rc == 0) {
-			if(DEBUG)
+			if (DEBUG)
 				System.out.println("Formatted volume.");
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean changePermissions(String password, String directory) {
 		String user = null;
 		String group = null;
 		BufferedReader br;
 		try {
-		br = SystemCall.runCommand("whoami");
-		String read = br.readLine();
-		if (read != null)
-			user = read;
-		
-		br = SystemCall.runCommand("id -g -n " + user);
-		read = br.readLine();
-		if (read != null)
-			group = read;
-		} catch(Exception e) {;}
-		
+			br = SystemCall.runCommand("whoami");
+			String read = br.readLine();
+			if (read != null)
+				user = read;
+
+			br = SystemCall.runCommand("id -g -n " + user);
+			read = br.readLine();
+			if (read != null)
+				group = read;
+		} catch (Exception e) {
+			;
+		}
+
 		if (user == null || group == null) {
 			System.out.println("Error retrieving username & group");
 			return false;
 		}
-		String command = "echo \"" + escape(password) + "\" | sudo -S " + "chown -R " + user + ":" + group + " " + directory;
+		String command = "echo \"" + escape(password) + "\" | sudo -S "
+				+ "chown -R " + user + ":" + group + " " + directory;
 		if (DEBUG) {
-			System.out.println("CMD4:"+command.replace(password, "<password>"));
+			System.out.println("CMD4:"
+					+ command.replace(password, "<password>"));
 		}
 		int retcode = SystemCall.returnCodePipe(command);
 		if (DEBUG) {
 			System.out.println("Changed owner to user:" + user);
 		}
-		if(retcode != 0) {
-			System.out.println("Failed to change permissions on dir:"+directory);
+		if (retcode != 0) {
+			System.out.println("Failed to change permissions on dir:"
+					+ directory);
 			return false;
 		}
 		return true;
 	}
-	
+
 	public boolean askFormat(String password, String formatme) {
-		System.out.println("No formatted driver found at "+formatme);
+		System.out.println("No formatted driver found at " + formatme);
 		Scanner kb = new Scanner(System.in);
-		System.out.print("Format "+formatme+"? (YES/NO):");
+		System.out.print("Format " + formatme + "? (YES/NO):");
 		String ans = kb.nextLine();
 		if (ans.equals("YES")) {
 			System.out.println("Formatting drive. This can take a while..");
-			return ( formatDrive(password, formatme) );
+			return (formatDrive(password, formatme));
 		} else {
-			System.out.println("User cancelled formatting of driver. Operation aborted.");
+			System.out
+					.println("User cancelled formatting of driver. Operation aborted.");
 			return false;
 		}
 	}
-	
 
 	public void mountVolume(String mountfrom, String mountto, String password) {
 		String formtest;
 		boolean choice = false;
-		
+
 		// Test 1: Does this directory exist? If not, make it.
-		if(! makeDir(password, mountto)) {
-			System.out.println("Failed to create directory :"+mountto+".");
+		if (!makeDir(password, mountto)) {
+			System.out.println("Failed to create directory :" + mountto + ".");
 			return;
 		}
-		
-		
-		//Has user specifically selected the device to use? (like /dev/[sdc,sdd,...]
-		if(!mountfrom.equals("/dev/sdb")) {
-			System.out.println("Using the driver:"+mountfrom);
+
+		// Has user specifically selected the device to use? (like
+		// /dev/[sdc,sdd,...]
+		if (!mountfrom.equals("/dev/sdb")) {
+			System.out.println("Using the driver:" + mountfrom);
 			formtest = checkFormat(password, mountfrom);
 			if (formtest.equals("format"))
-				if(!askFormat(password, mountfrom)) {
+				if (!askFormat(password, mountfrom)) {
 					System.out.println("Format failed.");
 					return;
 				}
 			choice = true;
 		}
-		//Search for a formatted device
-		if(!choice)
-			for(String s : new String[]{"","1","2","3","4"}) {
-				s = mountfrom+s;
-				if(DEBUG) {
-					System.out.println("Looking for formatted device:"+s);
+		// Search for a formatted device
+		if (!choice)
+			for (String s : new String[] { "", "1", "2", "3", "4" }) {
+				s = mountfrom + s;
+				if (DEBUG) {
+					System.out.println("Looking for formatted device:" + s);
 				}
 				formtest = checkFormat(password, s);
 				if (formtest.equals("formatted")) {
-					System.out.println("Using the driver found at "+s);
+					System.out.println("Using the driver found at " + s);
 					mountfrom = s;
 					choice = true;
 					break;
 				}
 			}
-		//No formatted device, offer to format entire device.
-		if(!choice) {
-			if(askFormat(password, mountfrom)) {
+		// No formatted device, offer to format entire device.
+		if (!choice) {
+			if (askFormat(password, mountfrom)) {
 				choice = true;
 			} else {
 				System.out.println("Format failed.");
 				return;
 			}
 		}
-		//Error
-		if(!choice) {
-			System.out.println("No drivers found on "+mountfrom);
+		// Error
+		if (!choice) {
+			System.out.println("No drivers found on " + mountfrom);
 			return;
 		}
-		
-		//ASSERT: mountfrom contains a formatted driver
+
+		// ASSERT: mountfrom contains a formatted driver
 		System.out.println("Mounting drive. This can take some time..");
-		if(!mountDrive(password, mountfrom, mountto)) {
+		if (!mountDrive(password, mountfrom, mountto)) {
 			System.out.println("Mount failed.");
 			return;
 		}
-		
-		if(!changePermissions(password, mountto)) {
-			System.out.println("Error changing permissions on "+mountto);
+
+		if (!changePermissions(password, mountto)) {
+			System.out.println("Error changing permissions on " + mountto);
 			return;
 		}
-		
-		System.out.println("Volume mounted to "+mountto+".");
+
+		System.out.println("Volume mounted to " + mountto + ".");
 		return;
 	}
 
@@ -895,7 +923,7 @@ class AtmoAPI implements Parcelable {
 	}
 
 	public void authIfNotValid() {
-		if(credentials.get("X-Auth-Token") != null)
+		if (credentials.get("X-Auth-Token") != null)
 			return;
 		if (validdate == null || validdate.compareTo(new Date()) < 0) {
 			authenticate(credentials.get("X-Auth-User"),
@@ -919,7 +947,8 @@ class AtmoAPI implements Parcelable {
 			if (credentials != null) {
 				credentials = validate(username, password, null);
 				credentials.put("Accept", "text/plain");
-				credentials.put("Content-type", "application/x-www-form-urlencoded");
+				credentials.put("Content-type",
+						"application/x-www-form-urlencoded");
 				credentials.put("X-Api-Version", "v1");
 			}
 			String dt = credentials.get("X-Validation-Time");
@@ -950,7 +979,8 @@ class AtmoAPI implements Parcelable {
 	 * @param password
 	 * @return
 	 */
-	private HashMap<String, String> validate(String username, String password, HttpsURLConnection conn) {
+	private HashMap<String, String> validate(String username, String password,
+			HttpsURLConnection conn) {
 		HashMap<String, String> retlist = new HashMap<String, String>();
 		try {
 			retlist.put("X-Auth-User", username);
@@ -974,34 +1004,20 @@ class AtmoAPI implements Parcelable {
 			}
 
 			Map<String, List<String>> map = conn.getHeaderFields();
-			
-			List<String> token = (map.get("X-Auth-Token") != null) ? map.get("X-Auth-Token") : map.get("x-auth-token");
-			
-			retlist.put("X-Auth-Token", token.get(0));
-			
-			token = (map.get("X-Server-Management-Url") != null) ? map.get("X-Server-Management-Url") : map.get("x-server-management-url");
-			retlist.put("X-Api-Server",token.get(0));
-			
-			token = (map.get("Date") != null) ? map.get("Date") : map.get("date");
-			retlist.put("X-Validation-Time", token.get(0));
 
-//			if (retlist != null && !MOBILE) {
-//				try {
-//				File f = new File(System.getProperty("user.home")+"/.atmocl");
-//				BufferedWriter out = new BufferedWriter(new FileWriter(f));
-//				Date t = new Date();
-//				out.write(""+t.getTime()+"\n");
-//				out.write(""+retlist.get("X-Api-Server")+"\n");
-//				out.write(""+retlist.get("X-Auth-Token")+"\n");
-//				out.write(""+retlist.get("X-Auth-User")+"\n");
-//				out.write(""+"v1"+"\n");
-//				out.flush();
-//				out.close();
-//				if(DEBUG) System.out.println("Authenticated & wrote credentials to file.");
-//				System.out.println("Your credentials have been saved for the next 24 hours.");
-//				}catch(Exception e){;}
-//				return retlist;
-//			}
+			List<String> token = (map.get("X-Auth-Token") != null) ? map
+					.get("X-Auth-Token") : map.get("x-auth-token");
+
+			retlist.put("X-Auth-Token", token.get(0));
+
+			token = (map.get("X-Server-Management-Url") != null) ? map
+					.get("X-Server-Management-Url") : map
+					.get("x-server-management-url");
+			retlist.put("X-Api-Server", token.get(0));
+
+			token = (map.get("Date") != null) ? map.get("Date") : map
+					.get("date");
+			retlist.put("X-Validation-Time", token.get(0));
 
 		} catch (Exception e) {
 			Log.e("ATMODROID", e.getMessage());
@@ -1010,10 +1026,42 @@ class AtmoAPI implements Parcelable {
 		}
 		return retlist;
 	}
-	
+
+	private boolean register_device(String params) {
+		HttpURLConnection conn = null;
+		try {
+			URL url = new URL("http://quentin.iplantcollaborative.org/c2dm/C2DM.php");
+			System.setProperty("http.keepAlive", "false");
+			conn = (HttpURLConnection) url.openConnection();
+			/* Set header correctly */
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-type",
+					"application/x-www-form-urlencoded");
+			conn.setRequestProperty("Accept", "text/plain");
+			conn.setDoOutput(true);
+			OutputStreamWriter writer = new OutputStreamWriter(
+					conn.getOutputStream());
+
+			writer.write(params);
+			writer.flush();
+
+			int rc = conn.getResponseCode();
+			if (rc != 200) {
+				if (MOBILE) {
+					Log.e(TAG, "Error: return code -" + rc);
+				}
+			}
+			writer.close();
+			return true;
+		} catch (Exception e) {
+			Log.e(TAG,"Error registering Device:",e);
+		}
+		return false;
+	}
+
 	private String atmo_POST_to_JSON(String urlex, String params) {
 		/* BEGIN POST REQUEST */
-		Log.v(TAG,"POST:"+urlex);
+		Log.v(TAG, "POST:" + urlex);
 		String JSON = null;
 		HttpsURLConnection conn = null;
 		try {
@@ -1040,10 +1088,10 @@ class AtmoAPI implements Parcelable {
 			int rc = conn.getResponseCode();
 			if (rc != 200) {
 				if (DEBUG) {
-					System.out.println("Invalid Response. RC="+rc);
+					System.out.println("Invalid Response. RC=" + rc);
 				}
-				if(MOBILE) {
-					Log.e(TAG,"Error: return code -"+rc);
+				if (MOBILE) {
+					Log.e(TAG, "Error: return code -" + rc);
 				}
 			}
 
@@ -1060,22 +1108,22 @@ class AtmoAPI implements Parcelable {
 			writer.close();
 			br.close();
 		} catch (Exception e) {
-			Log.e(TAG,"---");
-			Log.e(TAG,"Error:"+e.getMessage());
-			Log.e(TAG,"Error:"+Log.getStackTraceString(e));
-			if(JSON != null)
-				Log.e(TAG,"Error:"+JSON);
-			Log.e(TAG,"---");
+			Log.e(TAG, "---");
+			Log.e(TAG, "Error:" + e.getMessage());
+			Log.e(TAG, "Error:" + Log.getStackTraceString(e));
+			if (JSON != null)
+				Log.e(TAG, "Error:" + JSON);
+			Log.e(TAG, "---");
 		} finally {
-			Log.v(TAG,"POST:"+JSON);
-			if(conn != null)
+			Log.v(TAG, "POST:" + JSON);
+			if (conn != null)
 				conn.disconnect();
 		}
 		return JSON;
 	}
 
 	private String atmo_GET_to_JSON(String urlex) {
-		Log.v(TAG,"GET :"+urlex);
+		Log.v(TAG, "GET :" + urlex);
 		String msg = null;
 		HttpsURLConnection conn = null;
 		try {
@@ -1094,11 +1142,11 @@ class AtmoAPI implements Parcelable {
 
 			int rc = conn.getResponseCode();
 			if (rc != 200) {
-				if(DEBUG) {
-					System.out.println("Invalid Response. RC="+rc);
+				if (DEBUG) {
+					System.out.println("Invalid Response. RC=" + rc);
 				}
-				if(MOBILE) {
-					Log.e(TAG,"Error: return code -"+rc);
+				if (MOBILE) {
+					Log.e(TAG, "Error: return code -" + rc);
 				}
 			}
 
@@ -1111,16 +1159,16 @@ class AtmoAPI implements Parcelable {
 			}
 			br.close();
 		} catch (Exception e) {
-			Log.e(TAG,"---");
-			Log.e(TAG,"Error:"+e.getMessage());
-			Log.e(TAG,Log.getStackTraceString(e));
-			if(msg != null)
-				Log.e(TAG,"JSON:"+msg);
-			Log.e(TAG,"---");
+			Log.e(TAG, "---");
+			Log.e(TAG, "Error:" + e.getMessage());
+			Log.e(TAG, Log.getStackTraceString(e));
+			if (msg != null)
+				Log.e(TAG, "JSON:" + msg);
+			Log.e(TAG, "---");
 		} finally {
-			if(conn != null)
+			if (conn != null)
 				conn.disconnect();
-			Log.v(TAG,"GET :"+msg);
+			Log.v(TAG, "GET :" + msg);
 		}
 		return msg;
 	}
@@ -1128,12 +1176,14 @@ class AtmoAPI implements Parcelable {
 	public void waitFor(int i) {
 		try {
 			Thread.currentThread();
-			Thread.sleep(i*1000);
-		} catch(Exception e) {;}	
+			Thread.sleep(i * 1000);
+		} catch (Exception e) {
+			;
+		}
 	}
 
 	public static String escape(String password) {
-		//Cause 'new shell' commands (for piped input) to crash
+		// Cause 'new shell' commands (for piped input) to crash
 		password = password.replace("$", "\\$");
 		password = password.replace("&", "\\&");
 		password = password.replace("*", "\\*");
@@ -1149,17 +1199,18 @@ class AtmoAPI implements Parcelable {
 		password = password.replace("%", "\\%");
 		password = password.replace("[", "\\[");
 		password = password.replace("]", "\\]");
-		//Cause password to crash
+		// Cause password to crash
 		password = password.replace("`", "\\`");
 		password = password.replace("\"", "\\\"");
 		password = password.replace("\'", "\\\'");
 		password = password.replace("\\", "\\\\");
 		return password;
 	}
+
 	// PARCELABLE INTEGRATION
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private AtmoAPI(Parcel in) {
-        apps = (HashMap<String, AtmoApp>) in.readSerializable();
+		apps = (HashMap<String, AtmoApp>) in.readSerializable();
 		credentials = (HashMap<String, String>) in.readSerializable();
 		images = (HashMap<String, AtmoImage>) in.readSerializable();
 		instances = (HashMap<String, AtmoInstance>) in.readSerializable();
@@ -1167,7 +1218,7 @@ class AtmoAPI implements Parcelable {
 		validdate = (Date) in.readSerializable();
 		volumes = (HashMap<String, AtmoVolume>) in.readSerializable();
 		myserver = in.readString();
-    }
+	}
 
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeSerializable(apps);
@@ -1180,18 +1231,32 @@ class AtmoAPI implements Parcelable {
 		dest.writeString(myserver);
 	}
 
-    public static final Parcelable.Creator<AtmoAPI> CREATOR = new Parcelable.Creator<AtmoAPI>() {
-        public AtmoAPI createFromParcel(Parcel in) {
-            return new AtmoAPI(in);
-        }
+	public static final Parcelable.Creator<AtmoAPI> CREATOR = new Parcelable.Creator<AtmoAPI>() {
+		public AtmoAPI createFromParcel(Parcel in) {
+			return new AtmoAPI(in);
+		}
 
-        public AtmoAPI[] newArray(int size) {
-            return new AtmoAPI[size];
-        }
-    };
+		public AtmoAPI[] newArray(int size) {
+			return new AtmoAPI[size];
+		}
+	};
+
 	public int describeContents() {
 		return 0;
 	}
-	//END PARCELABLE INTEGRATION
 
+	// END PARCELABLE INTEGRATION
+
+	// C2DM Integration
+	public void setRegistrationID(String registrationID) {
+		this.registrationID = registrationID;
+		String params = "user=" + getUser() + "&registrationID="
+				+ registrationID;
+		register_device(params);
+	}
+
+	public String getRegistrationID() {
+		return registrationID;
+	}
+	// END C2DM Integration
 }

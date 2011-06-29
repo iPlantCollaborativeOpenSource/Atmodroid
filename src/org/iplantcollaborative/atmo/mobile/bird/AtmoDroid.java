@@ -1,8 +1,15 @@
 package org.iplantcollaborative.atmo.mobile.bird;
 
 import org.iplantcollaborative.atmo.mobile.bird.R;
+
+import com.google.android.apps.c2dm.C2DMessaging;
+
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -67,6 +74,7 @@ public class AtmoDroid extends Activity {
 		Log.v(TAG,"SETUP: Launching App.");
 	}
 
+	
 	private void prepareFields() {
 		myatmo = new AtmoAPI(serverselection);
 		loginbutton = new ImageButton(this);
@@ -208,72 +216,6 @@ public class AtmoDroid extends Activity {
 		lp_serverspinner.addRule(RelativeLayout.BELOW, block2.getId());
 		relative.addView(serverspinner, lp_serverspinner);
 		
-		/* Third layer: Login Required Label */
-		
-//		RelativeLayout.LayoutParams lp_loginreqlabel = new RelativeLayout.LayoutParams(
-//				matchwidth);
-//		lp_loginreqlabel.addRule(RelativeLayout.BELOW, serverspinner.getId());
-//		relative.addView(loginreqlabel, lp_loginreqlabel);
-//
-//		View ruler = new View(this);
-//		ruler.setId(ID_NUM++);
-//		ruler.setBackgroundColor(0xFFFFFFFF);
-//		RelativeLayout.LayoutParams lp_ruler = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,2);
-//		lp_ruler.addRule(RelativeLayout.BELOW,loginreqlabel.getId());
-//		relative.addView(ruler, lp_ruler);
-//		
-//		// Vertical Column 1
-//		column1 = new RelativeLayout(this);
-//		column1.setId(ID_NUM++);
-//		RelativeLayout.LayoutParams lp_column1 = new RelativeLayout.LayoutParams(
-//				wrapcontent);
-//		lp_column1.addRule(RelativeLayout.BELOW, loginreqlabel.getId());
-//
-//		// Content Vertical Column 1
-//		RelativeLayout.LayoutParams lp_createlabel = new RelativeLayout.LayoutParams(
-//				wrapcontent);
-//		column1.addView(createlabel, lp_createlabel);
-//
-//		RelativeLayout.LayoutParams lp_listimg = new RelativeLayout.LayoutParams(
-//				fillwidth);
-//		lp_listimg.addRule(RelativeLayout.BELOW, createlabel.getId());
-//		lp_listimg.addRule(RelativeLayout.ALIGN_RIGHT, createlabel.getId());
-//		column1.addView(listimg, lp_listimg);
-//
-//		RelativeLayout.LayoutParams lp_listapp = new RelativeLayout.LayoutParams(
-//				fillwidth);
-//		lp_listapp.addRule(RelativeLayout.BELOW, listimg.getId());
-//		lp_listapp.addRule(RelativeLayout.ALIGN_RIGHT, createlabel.getId());
-//		column1.addView(listapp, lp_listapp);
-//		// Add First Vertical Column
-//		relative.addView(column1, lp_column1);
-//
-//		// Vertical Column 2
-//		column2 = new RelativeLayout(this);
-//		column2.setId(ID_NUM++);
-//		RelativeLayout.LayoutParams lp_column2 = new RelativeLayout.LayoutParams(
-//				wrapcontent);
-//		lp_column2.addRule(RelativeLayout.RIGHT_OF, column1.getId());
-//		lp_column2.addRule(RelativeLayout.ALIGN_TOP, column1.getId());
-//		// Content Vertical Column 2
-//		RelativeLayout.LayoutParams lp_removelabel = new RelativeLayout.LayoutParams(
-//				wrapcontent);
-//		column2.addView(removelabel, lp_removelabel);
-//
-//		RelativeLayout.LayoutParams lp_listpend = new RelativeLayout.LayoutParams(
-//				wrapcontent);
-//		lp_listpend.addRule(RelativeLayout.BELOW, removelabel.getId());
-//		lp_listpend.addRule(RelativeLayout.ALIGN_TOP, listimg.getId());
-//		column2.addView(listpend, lp_listpend);
-//
-//		RelativeLayout.LayoutParams lp_listrun = new RelativeLayout.LayoutParams(
-//				wrapcontent);
-//		lp_listrun.addRule(RelativeLayout.BELOW, listpend.getId());
-//		lp_listrun.addRule(RelativeLayout.ALIGN_TOP, listapp.getId());
-//		column2.addView(listrun, lp_listrun);
-//
-//		relative.addView(column2, lp_column2);
-
 		return relative;
 	}
 	private void createHandlers() {
@@ -286,6 +228,9 @@ public class AtmoDroid extends Activity {
 					if (value) {
 						Toast.makeText(getApplicationContext(),
 								"Authentication Success", Toast.LENGTH_LONG).show();
+						//use current registration (on myDB)
+						//IF contact myDB and no/old registration:
+							C2DMessaging.register(getApplicationContext(), "iplant.atmo@gmail.com");
 						enableButtons(true);
 						logged = true;
 						Intent i = new Intent(getApplicationContext(), ListInstances.class);
@@ -312,7 +257,7 @@ public class AtmoDroid extends Activity {
 		else
 			return "https://atmo.iplantcollaborative.org";
 	}
-	protected static AtmoAPI getAtmo() {
+	public static AtmoAPI getAtmo() {
 		return myatmo;
 	}
 	public static ProgressDialog getDialog() {

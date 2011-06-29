@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -56,6 +57,20 @@ public class ListInstances extends ListActivity implements OnClickListener {
 	}
 
 	@Override
+	protected void onResume() {
+		//Refresh if m_ProgressDialog is not showing or is null
+		super.onResume();
+		if(m_ProgressDialog == null || m_ProgressDialog.isShowing() == false) {
+			m_ProgressDialog = ProgressDialog.show(ListInstances.this,
+					"Downloading Data",
+					"Retrieving Instances From Atmo..", true);
+			Thread thread = new Thread(null, viewOrders,
+					"AtmoDroidBackground");
+			thread.start();
+		}
+	}
+
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -68,6 +83,11 @@ public class ListInstances extends ListActivity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listinstances);
+		
+		//Cancel any current notification / progress dialog
+		String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+		mNotificationManager.cancelAll();
 		Bundle b = getIntent().getExtras();
 		myatmo = b.getParcelable("atmoapi");
 		m_orders = new ArrayList<AtmoInstance>();
@@ -116,6 +136,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 				// Do something with data, then dismiss dialog
 			}
 		};
+		//First time load, show dialog
 		m_ProgressDialog = ProgressDialog.show(ListInstances.this,
 				"Downloading Data", "Retrieving Instances From Atmo..", true);
 	}
@@ -134,6 +155,10 @@ public class ListInstances extends ListActivity implements OnClickListener {
 	public void onClick(DialogInterface dialog, int item) {
 		switch (item) {
 		case 0:
+			if(m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+				return;
+				//Don't start another thread if we're waiting..
+			}
 			Thread t = new DestroyThread(ai, AtmoDroid.getAtmo());
 			t.start();
 			Toast.makeText(getApplicationContext(), "Terminating Instance..",
@@ -195,7 +220,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 			Thread thread = new Thread(null, viewOrders, "AtmoDroidBackground");
 			thread.start();
 		} else if (item.getTitle().equals("Create Instance")) {
-			Intent i = new Intent(getApplicationContext(), CreateInstance.class);
+			Intent i = new Intent(getApplicationContext(), CreateInstanceTab.class);
 			i.putExtra("atmoapi", myatmo);
 			startActivityForResult(i, 0);
 		}
@@ -223,15 +248,13 @@ public class ListInstances extends ListActivity implements OnClickListener {
 	private Runnable returnRes = new Runnable() {
 		// A Smaller thread to be run on the UI after slow method completes
 		public void run() {
-			// If 1+ instances... Notify datasetchange... Add each instance to
-			// adapter.
+			m_ProgressDialog.dismiss();
 			if (m_orders != null && m_orders.size() > 0) {
 				m_adapter.clear();
 				m_adapter.notifyDataSetChanged();
 				for (int i = 0; i < m_orders.size(); i++)
 					m_adapter.add(m_orders.get(i));
 			}
-			m_ProgressDialog.dismiss();
 			m_adapter.notifyDataSetChanged();
 		}
 	};

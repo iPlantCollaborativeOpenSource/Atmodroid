@@ -2,6 +2,7 @@ package org.iplantcollaborative.atmo.mobile.bird;
 
 import org.iplantcollaborative.atmo.mobile.bird.R;
 
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,12 +28,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-public class CreateInstance extends ListActivity {
+public class CreateInstanceFromApp extends ListActivity {
   private ProgressDialog m_ProgressDialog = null;
   private ArrayList<AtmoApp> m_orders = null;
   private OrderAdapter m_adapter;
@@ -40,7 +42,8 @@ public class CreateInstance extends ListActivity {
   private AtmoAPI myatmo;
   private Handler run_handler;
   
-  @Override
+
+@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -54,7 +57,11 @@ public class CreateInstance extends ListActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.listinstances);
       Bundle b = getIntent().getExtras();
-      myatmo = b.getParcelable("atmoapi");
+      if (b != null && b.getParcelable("atmoapi") != null) {
+			myatmo = b.getParcelable("atmoapi");
+		} else {
+			myatmo = AtmoDroid.getAtmo();
+		}
       m_orders = new ArrayList<AtmoApp>();
       this.m_adapter = new OrderAdapter(this, R.layout.row, m_orders);
       setListAdapter(this.m_adapter);
@@ -68,12 +75,16 @@ public class CreateInstance extends ListActivity {
       lv.setTextFilterEnabled(true);
       lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-				String inst = ((TextView)((LinearLayout)((LinearLayout)view).getChildAt(0)).getChildAt(0)).getText().toString();
+				String inst = ((TextView)((LinearLayout)((LinearLayout)view).getChildAt(1)).getChildAt(0)).getText().toString();
 				inst = inst.replace(getNamePrefix(), "");
 				//String inst = ((TextView)view).getText().toString();
 				//Lookup info on VM and show
 				Bundle b = getIntent().getExtras();
-				AtmoAPI myatmo = b.getParcelable("atmoapi");
+				if (b != null && b.getParcelable("atmoapi") != null) {
+					myatmo = b.getParcelable("atmoapi");
+				} else {
+					myatmo = AtmoDroid.getAtmo();
+				}
 				AtmoApp ai = myatmo.getApp(inst);
 				AlertDialog alert = createOptions(ai);
 				alert.show();
@@ -89,7 +100,7 @@ public class CreateInstance extends ListActivity {
 				if(inst_id == null) {
 					Toast.makeText(getApplicationContext(),"Instance Creation Failed", Toast.LENGTH_LONG).show();
 				} else {
-					Toast.makeText(getApplicationContext(), "Instance created:"+inst_id, Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "Instance is being created..\nYou will be notified when creation is complete.", Toast.LENGTH_LONG).show();
 					onDestroy();
 				}
 //				boolean complete = (msg.arg1 == 1) ? true : false; 
@@ -104,7 +115,7 @@ public class CreateInstance extends ListActivity {
 //				//Do something with data, then dismiss dialog
 			}
 		};
-      m_ProgressDialog = ProgressDialog.show(CreateInstance.this,    
+      m_ProgressDialog = ProgressDialog.show(CreateInstanceFromApp.this,    
             "Downloading Data", "Retrieving Apps From Atmo..", true);
   }
   	//Context Menu (Long Press)
@@ -169,14 +180,14 @@ public class CreateInstance extends ListActivity {
 		if(item.getTitle().equals("Back")) {
 			this.finish();
 		} else if(item.getTitle().equals("Refresh")) {
-			m_ProgressDialog = ProgressDialog.show(CreateInstance.this,    
+			m_ProgressDialog = ProgressDialog.show(CreateInstanceFromApp.this,    
 		            "Downloading Data", "Retrieving Apps From Atmo..", true);
 			Thread thread =  new Thread(null, viewOrders, "AtmoDroidBackground");
 		    thread.start();
 		}
 		return true;
 	}
-	
+
 	class LaunchThread extends Thread {
 		AtmoAPI myatmo;
 		AtmoApp aa;

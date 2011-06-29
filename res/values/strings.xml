@@ -16,8 +16,8 @@
     <string name="imagesButtonText">Images</string>
     <string name="appsButtonText">Apps</string>
     <string name="homebutton">Return to Home</string>
-    <string name="main_no_instances">No Instances Found. Press Menu to create an Instance.</string>
-    <string name="main_no_c_instances">No Apps Found. Press Refresh.</string>
+    <string name="main_no_instances">No Instances Found. Press Menu and click Refresh.</string>
+    <string name="main_no_c_instances">No Apps Found. Press Menu and click Refresh.</string>
     <string name="rf_username_label">Username: Your iPlant Username</string>
     <string name="rf_username_hint">Username:</string>
     <string name="rf_imagename_label">Name of the Image: Please limit the name to 15 characters</string>
