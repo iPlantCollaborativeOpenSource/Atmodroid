@@ -36,12 +36,14 @@ import android.widget.Toast;
  */
 public class ListInstances extends ListActivity implements OnClickListener {
 	private ProgressDialog m_ProgressDialog = null;
+	private AlertDialog helpDialog = null;
 	private ArrayList<AtmoInstance> m_orders = null;
 	private OrderAdapter m_adapter;
 	private Runnable viewOrders;
 	private AtmoAPI myatmo;
 	private Handler run_handler;
 	private AtmoInstance ai;
+	private LayoutInflater mInflater;
 	
 
 	@Override
@@ -58,9 +60,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 
 	@Override
 	protected void onResume() {
-		//Refresh if m_ProgressDialog is not showing or is null
+		//Refresh if m_ProgressDialog is not showing or initialized and helpdialog is not showing or initialized..
 		super.onResume();
-		if(m_ProgressDialog == null || m_ProgressDialog.isShowing() == false) {
+		if((m_ProgressDialog == null || m_ProgressDialog.isShowing() == false) && (helpDialog == null || helpDialog.isShowing() == false)){
 			m_ProgressDialog = ProgressDialog.show(ListInstances.this,
 					"Downloading Data",
 					"Retrieving Instances From Atmo..", true);
@@ -83,7 +85,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listinstances);
-		
+
+		mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 		//Cancel any current notification / progress dialog
 		String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
@@ -154,7 +158,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 
 	public void onClick(DialogInterface dialog, int item) {
 		switch (item) {
-		case 0:
+		case 0://Terminate Instance
 			if(m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
 				return;
 				//Don't start another thread if we're waiting..
@@ -164,11 +168,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 			Toast.makeText(getApplicationContext(), "Terminating Instance..",
 					Toast.LENGTH_LONG).show();
 			break;
-		case 1:
+		case 1://Get Details
 			String display = ai.toString();
 			displayPopup(display);
-			// Toast.makeText(getApplicationContext(), display,
-			// Toast.LENGTH_LONG).show();
 			break;
 		case 2:
 			Intent i = new Intent(getApplicationContext(), ImageRequestForm.class);
@@ -193,7 +195,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 				});
 
 		// Remember, create doesn't show the dialog
-		AlertDialog helpDialog = helpBuilder.create();
+		helpDialog = helpBuilder.create();
 		helpDialog.show();
 	}
 
@@ -286,37 +288,33 @@ public class ListInstances extends ListActivity implements OnClickListener {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// Each time Adapter refreshes..
-			View v = convertView;
-			if (v == null) {
-				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.row, null);
+			ViewHolder holder;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.row, null);
+
+				holder = new ViewHolder();
+				holder.name = (TextView) convertView.findViewById(R.id.toptext);
+				holder.desc = (TextView) convertView
+						.findViewById(R.id.bottomtext);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
 			}
 			// Find the Instance corresponding to the position in the adapter
 			AtmoInstance o = items.get(position);
 			if (o != null) {
-				TextView tt = (TextView) v.findViewById(R.id.toptext);
-				TextView bt = (TextView) v.findViewById(R.id.bottomtext);
-				ImageView iv = (ImageView) v.findViewById(R.id.icon2);
-				if (tt != null) {
-					tt.setText(getNamePrefix() + o.getName());
-				}
-				if (bt != null) {
-					bt.setText(getStatusPrefix() + o.getInstance_state());
-				}
-				if (iv != null) {
-					String status = o.getInstance_state();
-					if (status.equalsIgnoreCase("pending"))
-						iv.setImageResource(R.drawable.pending);
-					else if (status.equalsIgnoreCase("running"))
-						iv.setImageResource(R.drawable.running);
-					else
-						iv.setImageResource(R.drawable.shutting_down);
-				}
 				// Add Name, Status and Image to row before returning view.
+				holder.name.setText(getNamePrefix() + o.getName());
+				holder.name.setSelected(true);
+				String status = o.getInstance_state();
+				holder.desc.setText(getStatusPrefix() + status);
+				holder.desc.setSelected(true);
+				holder.icon.setImageResource((status.equalsIgnoreCase("pending")) ? R.drawable.pending : (status.equalsIgnoreCase("running")) ? R.drawable.running : R.drawable.shutting_down);
 			}
-			return v;
+			return convertView;
 		}
-
 	}
 
 	private String getNamePrefix() {

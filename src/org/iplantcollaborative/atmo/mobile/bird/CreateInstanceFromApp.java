@@ -41,7 +41,8 @@ public class CreateInstanceFromApp extends ListActivity {
   private Runnable viewOrders;
   private AtmoAPI myatmo;
   private Handler run_handler;
-  
+  private LayoutInflater mInflater;
+
 
 @Override
 	protected void onDestroy() {
@@ -62,6 +63,8 @@ public class CreateInstanceFromApp extends ListActivity {
 		} else {
 			myatmo = AtmoDroid.getAtmo();
 		}
+      mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
       m_orders = new ArrayList<AtmoApp>();
       this.m_adapter = new OrderAdapter(this, R.layout.row, m_orders);
       setListAdapter(this.m_adapter);
@@ -256,36 +259,39 @@ public class CreateInstanceFromApp extends ListActivity {
               this.items = items;
       }
 
-      @Override
-      public View getView(int position, View convertView, ViewGroup parent) {
-      		//Each time Adapter refreshes..
-              View v = convertView;
-              if (v == null) {
-                  LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                  v = vi.inflate(R.layout.row, null);
-              }
-              //Find the Instance corresponding to the position in the adapter
-              AtmoApp o = items.get(position);
-              if (o != null) {
-                      TextView tt = (TextView) v.findViewById(R.id.toptext);
-                      TextView bt = (TextView) v.findViewById(R.id.bottomtext);
-                      ImageView iv = (ImageView) v.findViewById(R.id.icon2);
-                      if (tt != null) {
-                            tt.setText(getNamePrefix()+o.getName());  
-                            tt.setSelected(true);
-                      }
-                      if(bt != null){
-                            bt.setText(getDescPrefix()+ AtmoObject.removeTags(o.getDesc()));
-                            bt.setSelected(true);
-                      }
-                      if(iv != null) {
-                  		iv.setImageDrawable(drawable_from_url(AtmoDroid.getSelectedServer()+o.getIcon_path()));
-                      }
-                      //Add Name, Status and Image to row before returning view.
-              }
-              return v;
-      }
 
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// Each time Adapter refreshes..
+			ViewHolder holder;
+
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.row, null);
+
+				holder = new ViewHolder();
+				holder.name = (TextView) convertView.findViewById(R.id.toptext);
+				holder.desc = (TextView) convertView
+						.findViewById(R.id.bottomtext);
+				holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
+				holder.icon.setBackgroundResource(R.drawable.app1);
+				//Bitmap imgImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.app1), holder.icon.getWidth(), holder.icon.getHeight(), true);
+				//holder.icon.setImageBitmap(imgImage);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+			// Find the Instance corresponding to the position in the adapter
+			AtmoApp o = items.get(position);
+			if (o != null) {
+				// Add Name, Status and Image to row before returning view.
+				holder.name.setText(getNamePrefix() + o.getName());
+				holder.name.setSelected(true);
+				holder.desc.setText(getDescPrefix() + AtmoObject.removeTags(o.getDesc()));
+				holder.desc.setSelected(true);
+				holder.icon.setImageDrawable(drawable_from_url(AtmoDroid.getSelectedServer()+o.getIcon_path()));
+			}
+			return convertView;
+		}
   }
 	private String getNamePrefix() {return "Name: ";}
 	private String getDescPrefix() {return "Desc: ";}

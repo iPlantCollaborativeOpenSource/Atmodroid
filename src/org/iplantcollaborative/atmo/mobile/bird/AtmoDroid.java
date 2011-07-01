@@ -229,7 +229,7 @@ public class AtmoDroid extends Activity {
 								"Authentication Success", Toast.LENGTH_LONG).show();
 						//use current registration (on myDB)
 						//IF contact myDB and no/old registration:
-							C2DMessaging.register(getApplicationContext(), "iplant.atmo@gmail.com");
+						C2DMessaging.register(getApplicationContext(), "iplant.atmo@gmail.com");
 						enableButtons(true);
 						logged = true;
 						Intent i = new Intent(getApplicationContext(), ListInstances.class);
