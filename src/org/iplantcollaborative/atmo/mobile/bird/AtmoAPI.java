@@ -276,10 +276,10 @@ public class AtmoAPI implements Parcelable {
 				+ URLEncoder.encode(aa.getId(), "UTF-8")
 				+ "&callback_resource_url="
 				+ URLEncoder.encode(callback_url, "UTF-8");
-			Log.v(TAG, "POST: Params=" + params);
+			Log.i(TAG, "POST: Params=" + params);
 			String JSON = atmo_POST_to_JSON(urlex, params);
 			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
-			Log.v(TAG, "POST:" + urlex + " END.");
+			Log.i(TAG, "POST:" + urlex + " END.");
 			JSONObject object = orig.getJSONObject("result");
 			String instance_ID = object.getString("value");
 			if (instance_ID != null)
@@ -343,6 +343,8 @@ public class AtmoAPI implements Parcelable {
 			int x = 1;
 			for (int i = 0; i < value.length(); i++) {
 				temp = value.getJSONObject(i);
+				if(temp.getString("image_is_public").equals("public") != true)
+					continue;
 				base = temp.getString("image_name");
 				if (base.equals(""))
 					base = "Unnamed Image";
@@ -442,9 +444,9 @@ public class AtmoAPI implements Parcelable {
 					+ URLEncoder.encode("Launched via AtmoDroid", "UTF-8")
 					+ "&instance_tags=" + URLEncoder.encode("Droid", "UTF-8"))
 					+ "&callback_resource_url=" + URLEncoder.encode(callback_url, "UTF-8");
-			Log.v(TAG, "POST: Params=" + params);
+			Log.i(TAG, "POST: Params=" + params);
 			String JSON = atmo_POST_to_JSON(urlex, params);
-			Log.v(TAG, "POST:" + urlex + " END.");
+			Log.i(TAG, "POST:" + urlex + " END.");
 			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
 			// Result Object
 			JSONObject object = orig.getJSONObject("result");
@@ -465,9 +467,9 @@ public class AtmoAPI implements Parcelable {
 		String params = "instance_id=" + instance_id;
 		String JSON = null;
 		try {
-			Log.v(TAG, "POST: Params=" + params);
+			Log.i(TAG, "POST: Params=" + params);
 			JSON = atmo_POST_to_JSON(urlex, params);
-			Log.v(TAG, "POST:" + urlex + " END.");
+			Log.i(TAG, "POST:" + urlex + " END.");
 			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
 			JSONObject object = orig.getJSONObject("result");
 			String status = object.getString("code");
@@ -1052,6 +1054,7 @@ public class AtmoAPI implements Parcelable {
 				}
 			}
 			writer.close();
+			Log.i(TAG, "C2DM: Registered with C2DM");
 			return true;
 		} catch (Exception e) {
 			Log.e(TAG,"Error registering Device:",e);
@@ -1061,7 +1064,7 @@ public class AtmoAPI implements Parcelable {
 
 	private String atmo_POST_to_JSON(String urlex, String params) {
 		/* BEGIN POST REQUEST */
-		Log.v(TAG, "POST:" + urlex);
+		Log.i(TAG, "POST:" + urlex);
 		String JSON = null;
 		HttpsURLConnection conn = null;
 		try {
@@ -1115,7 +1118,7 @@ public class AtmoAPI implements Parcelable {
 				Log.e(TAG, "Error:" + JSON);
 			Log.e(TAG, "---");
 		} finally {
-			Log.v(TAG, "POST:" + JSON);
+			Log.i(TAG, "POST:" + JSON);
 			if (conn != null)
 				conn.disconnect();
 		}
@@ -1123,7 +1126,7 @@ public class AtmoAPI implements Parcelable {
 	}
 
 	private String atmo_GET_to_JSON(String urlex) {
-		Log.v(TAG, "GET :" + urlex);
+		Log.i(TAG, "GET :" + urlex);
 		String msg = null;
 		HttpsURLConnection conn = null;
 		try {
@@ -1168,7 +1171,7 @@ public class AtmoAPI implements Parcelable {
 		} finally {
 			if (conn != null)
 				conn.disconnect();
-			Log.v(TAG, "GET :" + msg);
+			Log.i(TAG, "GET :" + msg);
 		}
 		return msg;
 	}

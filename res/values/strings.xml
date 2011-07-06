@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Atmosphere for Android</string>
+    <string name="app_name">AtmoDroid</string>
     <string name="usernamelabel">Username:</string>
     <string name="passwordlabel">Password:</string>
     <string name="hellolabel">Click to Login to Atmosphere</string>
@@ -53,4 +53,17 @@
     Public visibility means that any user will be able to launch the instance.</string>
     <string name="rf_imagevis_hint">Image Visibility:</string>
     <string name="rf_submit_text">E-Mail Support</string>
+    <string name="helptext">
+    Welcome to AtmoDroid: The Android client for Atmosphere.\n
+    \nBefore using this app you need:\n
+    \n* iPlant account
+    \n* Access to atmosphere
+    \n
+    \nUse this app to:\n
+    \n* Login remotely to your Atmosphere account\n
+    \n* Get information about currently running instances.\n
+    \n* Request a running instance for use as an image.\n
+    \n* Create instances from Apps or Images\n
+    \n* Terminate running instances.\n
+    </string>
 </resources>

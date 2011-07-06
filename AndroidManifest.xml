@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 		<!-- Include remaining activities -->
-        <activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="CreateInstanceTab" android:theme="@android:style/Theme.NoTitleBar">></activity>
+        <activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="CreateInstanceTab"></activity>
  		<activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="CreateInstanceFromApp"></activity>
  		<activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="CreateInstanceFromImg"></activity>
  		<activity android:screenOrientation="portrait" android:configChanges="orientation|keyboardHidden" android:name="ImageRequestForm"></activity>

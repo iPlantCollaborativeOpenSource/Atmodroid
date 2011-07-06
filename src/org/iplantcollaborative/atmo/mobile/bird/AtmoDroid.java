@@ -1,16 +1,12 @@
 package org.iplantcollaborative.atmo.mobile.bird;
 
-import org.iplantcollaborative.atmo.mobile.bird.R;
-
-
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +14,8 @@ import android.text.TextUtils.TruncateAt;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
@@ -120,8 +118,8 @@ public class AtmoDroid extends Activity {
 					t.start();
 					return;
 				} else {
-					enableButtons(false);
-					logged = false;
+//					enableButtons(false);
+//					logged = false;
 					username.setText("");
 					password.setText("");
 				}
@@ -170,8 +168,8 @@ public class AtmoDroid extends Activity {
 					serverselection = "https://atmo-beta.iplantcollaborative.org:443/auth";
 				}
 				myatmo = new AtmoAPI(serverselection);
-				logged = false;
-				enableButtons(false);
+//				logged = false;
+//				enableButtons(false);
 			}
 		});
 	}
@@ -230,16 +228,16 @@ public class AtmoDroid extends Activity {
 						//use current registration (on myDB)
 						//IF contact myDB and no/old registration:
 						C2DMessaging.register(getApplicationContext(), "iplant.atmo@gmail.com");
-						enableButtons(true);
-						logged = true;
+						//enableButtons(true);
+						//logged = true;
 						Intent i = new Intent(getApplicationContext(), ListInstances.class);
 						i.putExtra("atmoapi", myatmo);
 						startActivityForResult(i, 0);
 					} else {
 						Toast.makeText(getApplicationContext(),
 								"Authentication Failed", Toast.LENGTH_LONG).show();
-						enableButtons(false);
-						logged = false;
+//						enableButtons(false);
+//						logged = false;
 					}
 				} catch (Exception e) {
 					;
@@ -267,6 +265,60 @@ public class AtmoDroid extends Activity {
 		m.setData(b);
 		return m;
 	}
+	
+	/**
+	 * Create a menu for the initial screen
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuItem help_item = menu.add("Help");
+		help_item.setIcon(R.drawable.ic_menu_help);
+		MenuItem exit_item = menu.add("Quit");
+		exit_item.setIcon(R.drawable.ic_menu_rotate);
+		return true;
+	}
+
+	/**
+	 * Options for initial screen menu
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getTitle().equals("Quit")) {
+			this.finish();
+		} else if (item.getTitle().equals("Help")) {
+			displayHelp();
+		} 
+		return true;
+	}
+	/**
+	 * Create a "Help" Popup
+	 */
+	public void displayHelp() {
+		String versionName;
+		try {
+			versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+		} catch(Exception e) {versionName = "1.0";}
+		AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
+		helpBuilder.setTitle("AtmoDroid v"+versionName);
+		helpBuilder.setMessage(getResources().getString(R.string.helptext));
+		helpBuilder.setNegativeButton("Request Access",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.iplantcollaborative.org/forms/request-preview-atmosphere"));
+						startActivity(browserIntent);
+					}
+				});
+		helpBuilder.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// close dialog
+					}
+				});
+		// Create & show dialog
+		AlertDialog helpDialog = helpBuilder.create();
+		helpDialog.show();
+	}
 	//Private Classes
 
 	class LoginThread extends Thread {
@@ -275,6 +327,7 @@ public class AtmoDroid extends Activity {
 			try {
 				boolean value = myatmo.authenticate(username.getText()
 						.toString().toLowerCase(), password.getText().toString());
+				dialog.cancel();
 				Bundle b = new Bundle();
 				b.putBoolean("truth", value);
 				login_handler.sendMessage(sendBundle(login_handler, b));

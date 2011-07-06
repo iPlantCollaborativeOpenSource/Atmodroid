@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 	private LayoutInflater mInflater;
 	
 
+	/**
+	 * Refreshes the list of instances after an activity is complete (Create app/img)
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -58,6 +62,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 		}
 	}
 
+	/**
+	 * Refreshes the list of instances after the activity is resumed
+	 */
 	@Override
 	protected void onResume() {
 		//Refresh if m_ProgressDialog is not showing or initialized and helpdialog is not showing or initialized..
@@ -108,10 +115,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int pos,
 					long id) {
-				String inst = ((TextView) ((LinearLayout) ((LinearLayout) view)
-						.getChildAt(1)).getChildAt(0)).getText().toString();
+				String inst = ((TextView)((RelativeLayout) view).getChildAt(2)).getText().toString(); 
 				inst = inst.replace(getNamePrefix(), "");
-				// String inst = ((TextView)view).getText().toString();
+
 				// Lookup info on VM and show
 				AtmoAPI myatmo = AtmoDroid.getAtmo();
 				AtmoInstance ai = myatmo.getInstance(inst);
@@ -123,6 +129,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 		Thread thread = new Thread(null, viewOrders, "AtmoDroidBackground");
 		thread.start();
 		run_handler = new Handler() {
+			/**
+			 * Notify user of instance termination status
+			 */
 			public void handleMessage(Message msg) {
 				boolean complete = (msg.arg1 == 1) ? true : false;
 				if (complete == false) {
@@ -130,9 +139,9 @@ public class ListInstances extends ListActivity implements OnClickListener {
 							"Instance Termination Failed", Toast.LENGTH_LONG)
 							.show();
 				} else {
-					m_ProgressDialog = ProgressDialog.show(ListInstances.this,
-							"Downloading Data",
-							"Retrieving Instances From Atmo..", true);
+					//Show dialog & refresh screen
+					if(m_ProgressDialog == null || m_ProgressDialog.isShowing() == false)
+						m_ProgressDialog = ProgressDialog.show(ListInstances.this,"Downloading Data","Retrieving Instances From Atmo..", true);
 					Thread thread = new Thread(null, viewOrders,
 							"AtmoDroidBackground");
 					thread.start();
@@ -141,8 +150,8 @@ public class ListInstances extends ListActivity implements OnClickListener {
 			}
 		};
 		//First time load, show dialog
-		m_ProgressDialog = ProgressDialog.show(ListInstances.this,
-				"Downloading Data", "Retrieving Instances From Atmo..", true);
+		if(m_ProgressDialog == null || m_ProgressDialog.isShowing() == false)
+			m_ProgressDialog = ProgressDialog.show(ListInstances.this,"Downloading Data", "Retrieving Instances From Atmo..", true);
 	}
 
 	// Context Menu (Long Press)
@@ -160,6 +169,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 		switch (item) {
 		case 0://Terminate Instance
 			if(m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+				Log.e(AtmoDroid.TAG,"Special case progressdialog+onclick");
 				return;
 				//Don't start another thread if we're waiting..
 			}
@@ -291,7 +301,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 			ViewHolder holder;
 
 			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.row, null);
+				convertView = mInflater.inflate(R.layout.row, parent, false);
 
 				holder = new ViewHolder();
 				holder.name = (TextView) convertView.findViewById(R.id.toptext);

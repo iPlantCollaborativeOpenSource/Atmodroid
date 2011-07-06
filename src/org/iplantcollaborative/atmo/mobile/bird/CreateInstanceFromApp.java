@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 public class CreateInstanceFromApp extends ListActivity {
@@ -78,9 +79,9 @@ public class CreateInstanceFromApp extends ListActivity {
       lv.setTextFilterEnabled(true);
       lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-				String inst = ((TextView)((LinearLayout)((LinearLayout)view).getChildAt(1)).getChildAt(0)).getText().toString();
+				String inst = ((TextView)((RelativeLayout) view).getChildAt(2)).getText().toString();
 				inst = inst.replace(getNamePrefix(), "");
-				//String inst = ((TextView)view).getText().toString();
+
 				//Lookup info on VM and show
 				Bundle b = getIntent().getExtras();
 				if (b != null && b.getParcelable("atmoapi") != null) {
@@ -106,20 +107,11 @@ public class CreateInstanceFromApp extends ListActivity {
 					Toast.makeText(getApplicationContext(), "Instance is being created..\nYou will be notified when creation is complete.", Toast.LENGTH_LONG).show();
 					onDestroy();
 				}
-//				boolean complete = (msg.arg1 == 1) ? true : false; 
-//				if(complete == false) {
-//					Toast.makeText(getApplicationContext(),"Instance Termination Failed", Toast.LENGTH_LONG).show();
-//				} else {
-//					m_ProgressDialog = ProgressDialog.show(CreateInstance.this,    
-//				            "Downloading Data", "Retrieving Apps From Atmo..", true);
-//					Thread thread =  new Thread(null, viewOrders, "AtmoDroidBackground");
-//				    thread.start();
-//				}
-//				//Do something with data, then dismiss dialog
 			}
 		};
-      m_ProgressDialog = ProgressDialog.show(CreateInstanceFromApp.this,    
-            "Downloading Data", "Retrieving Apps From Atmo..", true);
+		//Present a dialog box if not already showing
+		if(m_ProgressDialog == null || m_ProgressDialog.isShowing() == false)
+			m_ProgressDialog = ProgressDialog.show(CreateInstanceFromApp.this, "Downloading Data", "Retrieving Apps From Atmo..", true);
   }
   	//Context Menu (Long Press)
 	public AlertDialog createOptions(AtmoApp aapp) {
@@ -266,14 +258,14 @@ public class CreateInstanceFromApp extends ListActivity {
 			ViewHolder holder;
 
 			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.row, null);
+//				convertView = mInflater.inflate(R.layout.row, null);
+				convertView = mInflater.inflate(R.layout.row, parent, false);
 
 				holder = new ViewHolder();
 				holder.name = (TextView) convertView.findViewById(R.id.toptext);
-				holder.desc = (TextView) convertView
-						.findViewById(R.id.bottomtext);
+				holder.desc = (TextView) convertView.findViewById(R.id.bottomtext);
 				holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
-				holder.icon.setBackgroundResource(R.drawable.app1);
+				//holder.icon.setBackgroundResource(R.drawable.app1);
 				//Bitmap imgImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.app1), holder.icon.getWidth(), holder.icon.getHeight(), true);
 				//holder.icon.setImageBitmap(imgImage);
 				convertView.setTag(holder);

@@ -1,43 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip">
+
     <ImageView
         android:id="@+id/icon2"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_marginRight="6dip"/>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="0dip"
-        android:layout_weight="1"
-        android:layout_height="fill_parent">
-        <TextView
-            android:id="@+id/toptext"
-            android:layout_width="fill_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:lines="1"
-	        android:ellipsize="marquee"
-	        android:fadingEdge="horizontal"
-	        android:marqueeRepeatLimit="marquee_forever"
-	        android:scrollHorizontally="true"
-	        android:textColor="#FFF"
-        />
-        <TextView
-            android:id="@+id/bottomtext"
-            android:layout_width="fill_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:lines="1"
-	        android:ellipsize="marquee"
-	        android:fadingEdge="horizontal"
-	        android:marqueeRepeatLimit="marquee_forever"
-	        android:scrollHorizontally="true"
-	        android:textColor="#FFF"
-        />
-    </LinearLayout>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="6dip"
+        android:src="@drawable/app1"
+		/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/bottomtext"
+        android:layout_width="fill_parent"
+        android:layout_height="26dip" 
+
+        android:layout_toRightOf="@id/icon2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+	    android:scrollHorizontally="true"
+        android:text=""
+		android:textColor="#FFF"
+		/>
+
+    <TextView
+        android:id="@+id/toptext"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_toRightOf="@id/icon2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/bottomtext"
+        android:layout_alignWithParentIfMissing="true"
+
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+	    android:scrollHorizontally="true"
+        android:text="" 
+        android:textColor="#FFF"
+        />
+</RelativeLayout>

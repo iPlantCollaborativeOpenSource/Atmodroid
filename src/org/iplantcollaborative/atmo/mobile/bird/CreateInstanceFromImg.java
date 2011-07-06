@@ -26,8 +26,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +38,6 @@ public class CreateInstanceFromImg extends ListActivity {
 	private Runnable viewOrders;
 	private AtmoAPI myatmo;
 	private Handler run_handler;
-	private BitmapDrawable tempDrawable;
 	private LayoutInflater mInflater;
 
 	@Override
@@ -77,10 +76,8 @@ public class CreateInstanceFromImg extends ListActivity {
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int pos,
 					long id) {
-				String inst = ((TextView) ((LinearLayout) ((LinearLayout) view)
-						.getChildAt(1)).getChildAt(0)).getText().toString();
+				String inst = ((TextView)((RelativeLayout) view).getChildAt(2)).getText().toString();
 				inst = inst.replace(getNamePrefix(), "");
-				// String inst = ((TextView)view).getText().toString();
 				// Lookup info on VM and show
 				Bundle b = getIntent().getExtras();
 				AtmoAPI myatmo;
@@ -114,9 +111,9 @@ public class CreateInstanceFromImg extends ListActivity {
 				}
 			}
 		};
-		tempDrawable = drawable_from_url("https://atmo-beta.iplantcollaborative.org/site_media/images/app_icons/icons/app1.png");
-		m_ProgressDialog = ProgressDialog.show(CreateInstanceFromImg.this,
-				"Downloading Data", "Retrieving Images From Atmo..", true);
+		//Present a dialog box if not already showing
+		if(m_ProgressDialog == null || m_ProgressDialog.isShowing() == false)
+			m_ProgressDialog = ProgressDialog.show(CreateInstanceFromImg.this,"Downloading Data", "Retrieving Images From Atmo..", true);
 	}
 
 	// Context Menu (Long Press)
@@ -252,16 +249,14 @@ public class CreateInstanceFromImg extends ListActivity {
 			ViewHolder holder;
 
 			if (convertView == null) {
-				convertView = mInflater.inflate(R.layout.row, null);
+				convertView = mInflater.inflate(R.layout.row, parent, false);
 
 				holder = new ViewHolder();
 				holder.name = (TextView) convertView.findViewById(R.id.toptext);
 				holder.desc = (TextView) convertView
 						.findViewById(R.id.bottomtext);
 				holder.icon = (ImageView) convertView.findViewById(R.id.icon2);
-				holder.icon.setBackgroundResource(R.drawable.app1);
-				//Bitmap imgImage = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.app1), holder.icon.getWidth(), holder.icon.getHeight(), true);
-				//holder.icon.setImageBitmap(imgImage);
+				
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();

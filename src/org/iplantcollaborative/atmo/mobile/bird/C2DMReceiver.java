@@ -25,8 +25,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		// The registrationId should be send to your applicatioin server.
 		// We just log it to the LogCat view
 		// We will copy it from there
-		Log.e(TAG, "C2DM: Registration ID arrived: Fantastic!!!");
-		Log.e(TAG, "C2DM:"+registrationId);
+		Log.i(TAG, "C2DM: Registration ID:"+registrationId);
 		AtmoDroid.getAtmo().setRegistrationID(registrationId);
 	};
 
@@ -37,8 +36,8 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			String message = (String) extras.get("message");
+			Log.i(TAG, "C2DM: - Message received from Atmosphere:"+message);
 			notifyUser(message);
-			Log.e(TAG, "C2DM: - Message:"+message);
 			// Now do something smart based on the information
 		}
 	}
@@ -72,6 +71,7 @@ public class C2DMReceiver extends C2DMBaseReceiver {
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		note.setLatestEventInfo(c, contentTitle, contentText, contentIntent);
 		mNotificationManager.notify(1,note);
+		Log.i(TAG, "C2DM: Notified user with message");
 	}
 
 	@Override
