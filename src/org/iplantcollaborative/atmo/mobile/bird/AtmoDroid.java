@@ -305,7 +305,7 @@ public class AtmoDroid extends Activity {
 		helpBuilder.setNegativeButton("Request Access",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.iplantcollaborative.org/forms/request-preview-atmosphere"));
+						Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.iplantcollaborative.org/forms/request-access-preview-atmosphere"));
 						startActivity(browserIntent);
 					}
 				});
