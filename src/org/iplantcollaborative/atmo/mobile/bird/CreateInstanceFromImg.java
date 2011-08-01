@@ -147,7 +147,7 @@ public class CreateInstanceFromImg extends ListActivity {
 
 	public void displayPopup(String display) {
 		AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
-		helpBuilder.setTitle("App");
+		helpBuilder.setTitle("Image Details");
 		helpBuilder.setMessage(display);
 		helpBuilder.setPositiveButton("Done",
 				new DialogInterface.OnClickListener() {

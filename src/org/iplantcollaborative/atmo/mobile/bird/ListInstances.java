@@ -119,8 +119,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 				inst = inst.replace(getNamePrefix(), "");
 
 				// Lookup info on VM and show
-				AtmoAPI myatmo = AtmoDroid.getAtmo();
-				AtmoInstance ai = myatmo.getInstance(inst);
+				ai = myatmo.getInstance(inst);
 				AlertDialog alert = createOptions(ai);
 				alert.show();
 			}
@@ -195,7 +194,7 @@ public class ListInstances extends ListActivity implements OnClickListener {
 
 	public void displayPopup(String display) {
 		AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
-		helpBuilder.setTitle("Instance");
+		helpBuilder.setTitle("Instance Details");
 		helpBuilder.setMessage(display);
 		helpBuilder.setPositiveButton("Done",
 				new DialogInterface.OnClickListener() {

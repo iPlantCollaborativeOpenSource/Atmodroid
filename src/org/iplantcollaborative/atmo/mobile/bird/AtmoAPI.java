@@ -236,6 +236,8 @@ public class AtmoAPI implements Parcelable {
 			/* Iterate apps, save */
 			for (int i = 0; i < value.length(); i++) {
 				temp = value.getJSONObject(i);
+				if(temp.getString("is_sys_app").equals("true") != true)
+					continue;
 				test = base = temp.getString("application_name");
 				prefix = 2;
 				while (apps.get(test) != null) {
@@ -447,6 +449,7 @@ public class AtmoAPI implements Parcelable {
 			Log.i(TAG, "POST: Params=" + params);
 			String JSON = atmo_POST_to_JSON(urlex, params);
 			Log.i(TAG, "POST:" + urlex + " END.");
+			Log.i(TAG, "C2DM: Waiting for C2DM callback..");
 			JSONObject orig = (JSONObject) new JSONTokener(JSON).nextValue();
 			// Result Object
 			JSONObject object = orig.getJSONObject("result");

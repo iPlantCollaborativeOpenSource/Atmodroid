@@ -144,7 +144,7 @@ public class CreateInstanceFromApp extends ListActivity {
 	}
 	public void displayPopup(String display) {
 		AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this);
-		helpBuilder.setTitle("App");
+		helpBuilder.setTitle("App Details");
 		helpBuilder.setMessage(display);
 		helpBuilder.setPositiveButton("Done",
 			new DialogInterface.OnClickListener() {
@@ -280,7 +280,8 @@ public class CreateInstanceFromApp extends ListActivity {
 				holder.name.setSelected(true);
 				holder.desc.setText(getDescPrefix() + AtmoObject.removeTags(o.getDesc()));
 				holder.desc.setSelected(true);
-				holder.icon.setImageDrawable(drawable_from_url(AtmoDroid.getSelectedServer()+o.getIcon_path()));
+				if(o.getIcon_path().equals("None") == false)
+					holder.icon.setImageDrawable(drawable_from_url(AtmoDroid.getSelectedServer()+o.getIcon_path()));
 			}
 			return convertView;
 		}

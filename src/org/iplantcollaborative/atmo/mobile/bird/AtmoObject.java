@@ -191,6 +191,7 @@ class AtmoApp extends AtmoObject {
 		+ "\n\t---Debug Information---"
 		+ "\n\tMachine Image ID: " + machine_image_id
 		+ "\n\tMinimum Requirement: " + min_req
+		+ "\n\tIcon: "+getIcon_path()
 		+ "\n}";
 	}
 }
@@ -246,15 +247,27 @@ class AtmoImage extends AtmoObject {
 		return is_public;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "AtmoImage [name=" + getName() + ", desc=" + getDesc() + ", tags=" + getTags()
+//				+ ", id=" + getId() + ", location=" + location + ", owner=" + owner
+//				+ ", state=" + state + ", arch=" + arch + ", type=" + type
+//				+ ", ramdisk=" + ramdisk + ", kernel=" + kernel
+//				+ ", is_public=" + is_public + "]";
+//	}
+	
 	@Override
 	public String toString() {
-		return "AtmoImage [name=" + getName() + ", desc=" + getDesc() + ", tags=" + getTags()
-				+ ", id=" + getId() + ", location=" + location + ", owner=" + owner
-				+ ", state=" + state + ", arch=" + arch + ", type=" + type
-				+ ", ramdisk=" + ramdisk + ", kernel=" + kernel
-				+ ", is_public=" + is_public + "]";
+		return "AtmoImage {"
+		+ "\n\tName: " + getName()
+		+ "\n\tTags: " + removeTags(getTags())
+		+ "\n\tDescription: " + removeTags(getDesc())
+		+ "\n\t---Debug Information---"
+		+ "\n\tKernel: " + kernel
+		+ "\n\tRamdisk: " + ramdisk
+		+ "\n\tImage ID: " + getId()
+		+ "\n}";
 	}
-	
 	
 	
 }
